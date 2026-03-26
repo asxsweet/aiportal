@@ -24,7 +24,7 @@ export default function Sidebar({ role }: SidebarProps) {
 
   const teacherLinks = [
     { path: '/teacher/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard },
-    { path: '/teacher/assignments/create', labelKey: 'nav.assignments', icon: FileText },
+    { path: '/teacher/assignments', labelKey: 'nav.assignments', icon: FileText },
     { path: '/teacher/students', labelKey: 'nav.students', icon: Users },
     { path: '/teacher/analytics', labelKey: 'nav.analytics', icon: BarChart3 },
     { path: '/tools', labelKey: 'nav.tools', icon: Cpu },

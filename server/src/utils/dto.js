@@ -35,7 +35,8 @@ export function formatAssignment(doc, instructorName) {
     id: String(o._id),
     title: o.title,
     description: o.description,
-    dueDate: o.deadline instanceof Date ? o.deadline.toISOString().slice(0, 10) : o.deadline,
+    dueDate: o.deadline instanceof Date ? o.deadline.toISOString() : o.deadline,
+    status: o.status || 'active',
     tools: o.tools || [],
     attachmentPath: o.fileUrl || '',
     attachmentOriginalName: o.attachmentOriginalName || null,
@@ -86,6 +87,7 @@ export function formatProject(doc, extras = {}) {
     teamMembers: extras.teamMembers || [],
     rating: extras.rating,
     assignmentTitle: extras.assignmentTitle,
+    commentsCount: extras.commentsCount ?? 0,
   };
 }
 

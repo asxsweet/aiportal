@@ -5,6 +5,7 @@ import { User } from '../models/index.js';
 import { config } from '../config.js';
 import { formatUser } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { ok, fail } from '../utils/helpers.js';
 
 const registerSchema = z.object({
   email: z.string().email(),
@@ -38,20 +39,21 @@ export const register = asyncHandler(async (req, res) => {
   });
   const u = formatUser(user);
   const token = signToken(user);
-  res.status(201).json({ user: u, token });
+  return ok(res, { user: u, token }, 'Registered');
 });
 
 export const login = asyncHandler(async (req, res) => {
   const body = loginSchema.parse(req.body);
   const user = await User.findOne({ email: body.email.toLowerCase() }).select('+password');
   if (!user || !(await bcrypt.compare(body.password, user.password))) {
-    return res.status(401).json({ error: 'Invalid email or password' });
+    return fail(res, 'Invalid email or password', 401);
   }
-  res.json({ user: formatUser(user), token: signToken(user) });
+  return ok(res, { user: formatUser(user), token: signToken(user) });
 });
 
 export const me = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user.id).lean();
-  if (!user) return res.status(404).json({ error: 'User not found' });
-  res.json({ user: formatUser(user) });
+  if (!user) return fail(res, 'User not found', 404);
+  return ok(res, { user: formatUser(user) });
 });
+

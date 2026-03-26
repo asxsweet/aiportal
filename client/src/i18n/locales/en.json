@@ -77,6 +77,7 @@
     "pendingSubmissions": "Pending submissions",
     "avgPerformance": "Avg. performance",
     "recentAssignments": "Recent assignments",
+    "viewAll": "View all",
     "due": "Due",
     "submissions": "Submissions",
     "progress": "Progress",
@@ -119,6 +120,25 @@
     "toolsRequired": "Select at least one tool.",
     "loadError": "Could not create assignment."
   },
+  "assignments": {
+    "title": "Assignments",
+    "subtitle": "Manage all assignments in one place",
+    "add": "+ Add Assignment",
+    "editDeadline": "Edit deadline",
+    "archive": "Archive",
+    "restore": "Restore",
+    "delete": "Delete",
+    "statusActive": "active",
+    "statusExpired": "expired",
+    "statusArchived": "archived",
+    "loadError": "Could not load assignments.",
+    "createError": "Could not create assignment.",
+    "updateError": "Could not update assignment.",
+    "deleteError": "Could not delete assignment.",
+    "deleteConfirm": "Delete this assignment permanently?",
+    "chooseFile": "Choose file",
+    "noFileChosen": "No file chosen"
+  },
   "assignmentDetail": {
     "posted": "Posted",
     "dueDate": "Due date",
@@ -132,7 +152,8 @@
     "student": "Student",
     "gradeProject": "Open project",
     "loadError": "Could not load assignment.",
-    "instructor": "Instructor"
+    "instructor": "Instructor",
+    "deadlineExpired": "Deadline expired"
   },
   "projectSubmit": {
     "title": "Submit your project",

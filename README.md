@@ -1,65 +1,133 @@
-# Robotics Education Platform (RoboLearn)
+# RoboLearn - Robotics Education Platform
 
-Full-stack app: **React (Vite) + Tailwind** frontend, **Node.js + Express + MongoDB (Mongoose)** backend, **JWT** auth, **Multer** uploads (PDF/DOC/DOCX), mock **AI evaluation**, **i18n** (en / ru / kz).
+Production-ready full-stack platform for robotics learning with teacher/student roles, assignment lifecycle, project submission, comments, and AI assistant support.
 
-## Prerequisites
+## Architecture Overview
+
+- **Frontend**: React + Vite + Tailwind + i18n (`en`, `ru`, `kz`)
+- **Backend**: Node.js + Express, layered MVC
+- **Database**: MongoDB + Mongoose
+- **Auth**: JWT with role-based authorization
+- **AI**: Gemini-backed assistant/evaluation with resilient fallback logic
+
+## Backend Structure
+
+`server/src`:
+
+- `config/` - database connection and runtime config
+- `models/` - Mongoose domain models (`User`, `Assignment`, `Project`, `Comment`, `Rating`)
+- `controllers/` - request orchestration and business logic
+- `routes/` - API route definitions, no business logic
+- `middlewares/` - auth/role/error middleware
+- `services/` - external integrations and domain services (AI)
+- `validators/` - Zod validators
+- `utils/` - helpers, DTO mappers, async utilities
+
+## Frontend Structure
+
+`client/src`:
+
+- `app/` - pages and route composition
+- `components/` - reusable UI/layout/common components
+- `features/` - feature-oriented hooks/services (auth, assignments, ai)
+- `services/` - API integration layer
+- `hooks/` - shared hooks
+- `i18n/` - translations and i18n bootstrapping
+- `lib/` - low-level utilities (axios setup, downloads, media URLs)
+
+## API Response Format
+
+All controller responses are standardized:
+
+```json
+{
+  "success": true,
+  "data": {},
+  "message": ""
+}
+```
+
+Error response:
+
+```json
+{
+  "success": false,
+  "data": null,
+  "message": "Human-readable error message"
+}
+```
+
+Controller helpers:
+
+- `ok(res, data, message?)`
+- `fail(res, message, status?, data?)`
+
+## Setup
+
+### 1) Prerequisites
 
 - Node.js 18+
-- [MongoDB Atlas](https://www.mongodb.com/atlas) (or any MongoDB 6+)
+- MongoDB Atlas (or MongoDB 6+)
 
-## Database
+### 2) Environment
 
-1. Create a cluster and database user in Atlas; get your connection string.
-2. Copy `server/.env.example` to `server/.env` and set **`MONGO_URI`**, **`JWT_SECRET`**, and optional `PORT` / `CLIENT_ORIGIN`.
-3. No manual migrations: Mongoose creates collections on first write.
+Create `server/.env`:
+
+```env
+PORT=4001
+MONGO_URI=mongodb+srv://...
+JWT_SECRET=change-me
+JWT_EXPIRES_IN=7d
+CLIENT_ORIGIN=http://localhost:5173
+UPLOAD_DIR=./uploads
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+Optional `client/.env`:
+
+```env
+VITE_API_URL=http://localhost:4001
+VITE_PROXY_TARGET=http://localhost:4001
+```
+
+### 3) Install
+
+```bash
+cd server && npm install
+cd ../client && npm install
+```
+
+## Run
+
+### Backend
 
 ```bash
 cd server
-npm install
-```
-
-## Run API + client (recommended)
-
-From the repo root (MongoDB must already be running and reachable):
-
-```bash
-npm install
 npm run dev
 ```
 
-This runs **server** and **client** together. If the UI shows proxy errors like `ECONNREFUSED` on `/api/...`, the API is not running or `client/.env` **`VITE_PROXY_TARGET`** does not match **`PORT`** in `server/.env`. If you see **`ECONNRESET`** on `/api/projects`, the API likely restarted mid-request (`node --watch` after a file save), hit a timeout, or crashed — retry the request and avoid editing server files while uploading; project submission can take a while when **Gemini** is enabled.
-
-## Run API only
-
-```bash
-cd server
-npm run dev
-```
-
-API: default `http://localhost:4001` (health: `GET /api/health`; port from `PORT` in `server/.env`). Uploads are stored under `server/uploads/`. The API uses an **MVC layout**: `src/models`, `src/controllers`, `src/routes`.
-
-## Run client only
-
-Start the API in another terminal first, then:
+### Frontend
 
 ```bash
 cd client
-npm install
 npm run dev
 ```
 
-Client: `http://localhost:5173`. Vite proxies `/api` to `http://127.0.0.1:4001` by default (set **`VITE_PROXY_TARGET`** in `client/.env` to match your API host/port).
+## Deployment Notes
 
-## Roles
+- Use managed MongoDB (Atlas) with IP and user restrictions.
+- Set strong `JWT_SECRET` in production.
+- Configure CORS `CLIENT_ORIGIN` to deployed frontend origin only.
+- Store uploads on persistent volume/object storage in cloud environments.
+- Keep AI keys server-side only; never expose in frontend.
+- Build frontend with `npm run build` and serve static assets via CDN/reverse proxy.
+- Place API behind a process manager (PM2/systemd/container orchestrator) and reverse proxy (Nginx/Traefik).
 
-- Register as **teacher** or **student**. Teachers only see their own assignments and related submissions; students see all assignments and only their own projects.
+## Stability Guarantees After Refactor
 
-## Project layout
-
-- `client/` — UI from the original design ZIP, wired to REST + i18n + auth.
-- `server/` — Express routes under `/api/*`, Zod validation, JWT middleware.
-- `server/src/models/` — Mongoose schemas: `User`, `Assignment`, `Project`, `Comment`, `Rating`.
-
-## Original UI archive
-
-The extracted Figma/Make export is in `ui-extract/` for reference; the working app lives in `client/`.
+- Legacy duplicate backend files removed.
+- Routes point to canonical `*.controller.js` files only.
+- No business logic inside routes.
+- Standardized response contract across all controllers.
+- Frontend API layer remains compatible and stable.

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import FileUpload from '../components/FileUpload';
 import AiAssistantPanel from '../components/AiAssistantPanel';
@@ -21,6 +21,7 @@ export default function ProjectSubmission() {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [locked, setLocked] = useState(false);
 
   const handleToolToggle = (tool: 'ev3' | 'tinkercad') => {
     setFormData((prev) => ({
@@ -46,10 +47,30 @@ export default function ProjectSubmission() {
     setFormData({ ...formData, teamMembers: updated });
   };
 
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await api.get<{ assignment: { status: 'active' | 'expired' | 'archived' } }>(`/api/assignments/${id}`);
+        if (!cancelled) setLocked(data.assignment.status !== 'active');
+      } catch {
+        if (!cancelled) setLocked(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (!id) return;
+    if (locked) {
+      setError(t('assignmentDetail.deadlineExpired'));
+      return;
+    }
     if (!file) {
       setError(t('projectSubmit.fileRequired'));
       return;
@@ -90,6 +111,11 @@ export default function ProjectSubmission() {
           {error && (
             <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-700 border border-red-100">
               {error}
+            </div>
+          )}
+          {locked && (
+            <div className="mb-6 p-4 rounded-xl bg-amber-50 text-amber-700 border border-amber-200">
+              {t('assignmentDetail.deadlineExpired')}
             </div>
           )}
 
@@ -231,7 +257,7 @@ export default function ProjectSubmission() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                disabled={pending}
+                disabled={pending || locked}
                 className="flex-1 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold disabled:opacity-60"
               >
                 {pending ? t('loading') : t('submit')}

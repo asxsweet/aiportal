@@ -37,7 +37,16 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use((response) => {
+  const body = response.data as { success?: boolean; data?: unknown };
+  if (body && typeof body === 'object' && 'success' in body) {
+    // Keep existing callers working by unwrapping normalized envelope.
+    response.data = body.data;
+  }
+  return response;
+});
+
 export function getErrorMessage(err: unknown, fallback = 'Something went wrong') {
-  const ax = err as AxiosError<{ error?: string }>;
-  return ax.response?.data?.error || ax.message || fallback;
+  const ax = err as AxiosError<{ error?: string; message?: string }>;
+  return ax.response?.data?.message || ax.response?.data?.error || ax.message || fallback;
 }

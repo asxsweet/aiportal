@@ -13,6 +13,7 @@ type Assignment = {
   title: string;
   description: string;
   dueDate: string;
+  status: 'active' | 'expired' | 'archived';
   tools: ('ev3' | 'tinkercad')[];
   attachmentOriginalName?: string | null;
   instructorName?: string | null;
@@ -25,6 +26,11 @@ type ProjectRow = {
   studentName?: string;
   status: string;
   submittedAt: string;
+  commentsCount?: number;
+  rating?: {
+    aiOverall?: number | null;
+    teacherScore?: number | null;
+  } | null;
 };
 
 export default function AssignmentDetail() {
@@ -85,6 +91,7 @@ export default function AssignmentDetail() {
       </SidebarLayout>
     );
   }
+  const isExpired = assignment.status === 'expired';
 
   return (
     <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
@@ -117,11 +124,12 @@ export default function AssignmentDetail() {
               <div>
                 <p className="text-sm text-gray-600 mb-1">{t('assignmentDetail.dueDate')}</p>
                 <p className="font-semibold text-lg">
-                  {new Date(assignment.dueDate).toLocaleDateString(undefined, {
-                    weekday: 'long',
+                  {new Date(assignment.dueDate).toLocaleString(undefined, {
                     year: 'numeric',
-                    month: 'long',
+                    month: '2-digit',
                     day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
                   })}
                 </p>
               </div>
@@ -136,6 +144,11 @@ export default function AssignmentDetail() {
               </div>
             </div>
           </div>
+          {role === 'student' && isExpired && (
+            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 text-sm font-medium">
+              {t('assignmentDetail.deadlineExpired')}
+            </div>
+          )}
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
             <h2 className="text-xl font-semibold mb-4">{t('assignmentDetail.description')}</h2>
@@ -187,13 +200,27 @@ export default function AssignmentDetail() {
                     {submissions.map((s) => (
                       <li
                         key={s.id}
-                        className="py-4 flex items-center justify-between flex-wrap gap-2"
+                        className="py-4 flex items-center justify-between flex-wrap gap-3"
                       >
                         <div>
                           <p className="font-medium">{s.title}</p>
                           <p className="text-sm text-gray-600">
                             {t('assignmentDetail.student')}: {s.studentName}
                           </p>
+                          <div className="mt-1 flex flex-wrap gap-2 text-xs">
+                            <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                              {t('status.submitted')}
+                            </span>
+                            <span className="px-2 py-0.5 rounded-full bg-violet-100 text-violet-700">
+                              AI: {s.rating?.aiOverall ?? '—'}
+                            </span>
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                              Teacher: {s.rating?.teacherScore ?? '—'}
+                            </span>
+                            <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+                              {t('comments.title')}: {s.commentsCount ?? 0}
+                            </span>
+                          </div>
                           <p className="text-xs text-gray-400">
                             {new Date(s.submittedAt).toLocaleString()}
                           </p>
@@ -239,7 +266,12 @@ export default function AssignmentDetail() {
             {role === 'student' && (
               <Link
                 to={`/assignment/${id}/submit`}
-                className="flex-1 min-w-[200px] py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold flex items-center justify-center gap-2"
+                aria-disabled={isExpired}
+                className={`flex-1 min-w-[200px] py-4 text-white rounded-lg transition-all font-semibold flex items-center justify-center gap-2 ${
+                  isExpired
+                    ? 'bg-gray-400 pointer-events-none'
+                    : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-lg'
+                }`}
               >
                 <Upload className="w-5 h-5" />
                 {t('assignmentDetail.submitProject')}

@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import { z } from 'zod';
 import { Comment, Project } from '../models/index.js';
 import { formatComment } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { z } from 'zod';
+import { ok, fail } from '../utils/helpers.js';
 
 const createSchema = z.object({
   text: z.string().min(1).max(5000),
@@ -24,13 +25,13 @@ async function canAccessProject(user, projectId) {
   return false;
 }
 
-export const list = asyncHandler(async (req, res) => {
+export const listComments = asyncHandler(async (req, res) => {
   const projectId = req.query.projectId;
   if (!projectId || !mongoose.Types.ObjectId.isValid(projectId)) {
-    return res.status(400).json({ error: 'projectId required' });
+    return fail(res, 'projectId required', 400);
   }
-  const ok = await canAccessProject(req.user, projectId);
-  if (!ok) return res.status(403).json({ error: 'Forbidden' });
+  const canAccess = await canAccessProject(req.user, projectId);
+  if (!canAccess) return fail(res, 'Forbidden', 403);
 
   const { page, pageSize, offset } = parsePage(req);
   const total = await Comment.countDocuments({ projectId });
@@ -49,7 +50,7 @@ export const list = asyncHandler(async (req, res) => {
     }),
   );
 
-  res.json({
+  return ok(res, {
     data,
     page,
     pageSize,
@@ -58,13 +59,13 @@ export const list = asyncHandler(async (req, res) => {
   });
 });
 
-export const create = asyncHandler(async (req, res) => {
+export const createComment = asyncHandler(async (req, res) => {
   const projectId = req.body.projectId;
   if (!projectId || !mongoose.Types.ObjectId.isValid(projectId)) {
-    return res.status(400).json({ error: 'projectId required' });
+    return fail(res, 'projectId required', 400);
   }
-  const ok = await canAccessProject(req.user, projectId);
-  if (!ok) return res.status(403).json({ error: 'Forbidden' });
+  const canAccess = await canAccessProject(req.user, projectId);
+  if (!canAccess) return fail(res, 'Forbidden', 403);
 
   const parsed = createSchema.parse({ text: req.body.text });
   const doc = await Comment.create({
@@ -74,18 +75,18 @@ export const create = asyncHandler(async (req, res) => {
   });
 
   const populated = await Comment.findById(doc._id).populate('userId', 'name role').lean();
-  res.status(201).json({
+  return ok(res, {
     comment: formatComment({
       ...populated,
       authorName: populated.userId?.name,
       authorRole: populated.userId?.role,
     }),
-  });
+  }, 'Comment created');
 });
 
-export const remove = asyncHandler(async (req, res) => {
+export const deleteComment = asyncHandler(async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ error: 'Invalid id' });
+    return fail(res, 'Invalid id', 400);
   }
   const c = await Comment.findById(req.params.id)
     .populate({
@@ -94,15 +95,16 @@ export const remove = asyncHandler(async (req, res) => {
     })
     .lean();
 
-  if (!c) return res.status(404).json({ error: 'Not found' });
+  if (!c) return fail(res, 'Not found', 404);
   const ownerId = c.projectId?.assignmentId?.createdBy
     ? String(c.projectId.assignmentId.createdBy)
     : null;
   const uid = c.userId?._id ?? c.userId;
   const isAuthor = String(uid) === req.user.id;
   const isTeacherOwner = req.user.role === 'teacher' && ownerId === req.user.id;
-  if (!isAuthor && !isTeacherOwner) return res.status(403).json({ error: 'Forbidden' });
+  if (!isAuthor && !isTeacherOwner) return fail(res, 'Forbidden', 403);
 
   await Comment.deleteOne({ _id: c._id });
-  res.status(204).send();
+  return ok(res, null, 'Comment deleted');
 });
+

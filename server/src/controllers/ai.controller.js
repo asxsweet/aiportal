@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { assistProject, evaluateProjectShort } from '../services/aiAssistant.js';
+import { assistWithAi, evaluateWithAi } from '../services/ai.service.js';
+import { ok } from '../utils/helpers.js';
 
 const assistSchema = z.object({
   question: z.string().trim().min(1).max(500),
@@ -19,12 +20,13 @@ const evaluateSchema = z.object({
 
 export const assist = asyncHandler(async (req, res) => {
   const body = assistSchema.parse(req.body);
-  const out = await assistProject(body);
-  res.json(out);
+  const out = await assistWithAi(body);
+  return ok(res, out);
 });
 
 export const evaluate = asyncHandler(async (req, res) => {
   const body = evaluateSchema.parse(req.body);
-  const out = await evaluateProjectShort(body);
-  res.json(out);
+  const out = await evaluateWithAi(body);
+  return ok(res, out);
 });
+

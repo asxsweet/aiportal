@@ -10,6 +10,7 @@ type AssignmentRow = {
   id: string;
   title: string;
   dueDate: string;
+  status: 'active' | 'expired' | 'archived';
   tools: ('ev3' | 'tinkercad')[];
   submissionCount: number;
   studentTotal?: number;
@@ -113,7 +114,7 @@ export default function TeacherDashboard() {
                 {t('nav.settings')}
               </Link>
               <Link
-                to="/teacher/assignments/create"
+                to="/teacher/assignments"
                 className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all flex items-center gap-2 font-semibold"
               >
                 <Plus className="w-5 h-5" />
@@ -156,7 +157,12 @@ export default function TeacherDashboard() {
 
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-6 border-b border-gray-100">
-                  <h2 className="text-xl font-semibold">{t('teacherDash.recentAssignments')}</h2>
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="text-xl font-semibold">{t('teacherDash.recentAssignments')}</h2>
+                    <Link to="/teacher/assignments" className="text-sm text-blue-600 hover:underline">
+                      {t('teacherDash.viewAll')}
+                    </Link>
+                  </div>
                 </div>
                 {assignments.length === 0 ? (
                   <div className="p-12 text-center text-gray-500">{t('empty')}</div>
@@ -180,11 +186,32 @@ export default function TeacherDashboard() {
                                 <span className="flex items-center gap-1">
                                   <Clock className="w-4 h-4" />
                                   {t('teacherDash.due')}:{' '}
-                                  {new Date(assignment.dueDate).toLocaleDateString()}
+                                  {new Date(assignment.dueDate).toLocaleString([], {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                  })}
                                 </span>
                                 <span>
                                   {t('teacherDash.submissions')}: {assignment.submissionCount}/
                                   {total || '—'}
+                                </span>
+                                <span
+                                  className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                    assignment.status === 'active'
+                                      ? 'bg-emerald-100 text-emerald-700'
+                                      : assignment.status === 'expired'
+                                        ? 'bg-red-100 text-red-700'
+                                        : 'bg-gray-200 text-gray-700'
+                                  }`}
+                                >
+                                  {assignment.status === 'active'
+                                    ? t('assignments.statusActive')
+                                    : assignment.status === 'expired'
+                                      ? t('assignments.statusExpired')
+                                      : t('assignments.statusArchived')}
                                 </span>
                               </div>
                               <div className="flex gap-2 mt-3 flex-wrap">

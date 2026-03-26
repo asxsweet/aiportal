@@ -2,11 +2,12 @@ import path from 'path';
 import fs from 'fs';
 import mongoose from 'mongoose';
 import { z } from 'zod';
-import { Assignment, Project, User, Rating } from '../models/index.js';
+import { Assignment, Project, User, Rating, Comment } from '../models/index.js';
 import { config } from '../config.js';
 import { formatProject, formatRating } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { evaluateProject, averageAiScore, computeFinalScore } from '../services/aiEvaluation.js';
+import { evaluateProject, averageAiScore } from '../services/aiEvaluation.js';
+import { ok, fail } from '../utils/helpers.js';
 
 const createFieldsSchema = z.object({
   assignmentId: z.string(),
@@ -50,34 +51,36 @@ async function enrichProject(p) {
     : [];
   const teamMembers = teamDocs.map((u) => u.name);
   const rating = await Rating.findOne({ projectId: p._id }).lean();
+  const commentsCount = await Comment.countDocuments({ projectId: p._id });
   return formatProject(p, {
     teamMembers,
     rating: formatRating(rating),
+    commentsCount,
   });
 }
 
-export const downloadFile = asyncHandler(async (req, res) => {
+export const downloadProjectFile = asyncHandler(async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ error: 'Invalid id' });
+    return fail(res, 'Invalid id', 400);
   }
   const row = await Project.findById(req.params.id).populate({ path: 'assignmentId', select: 'createdBy' }).lean();
-  if (!row) return res.status(404).json({ error: 'Not found' });
+  if (!row) return fail(res, 'Not found', 404);
   const ownerId = row.assignmentId?.createdBy ? String(row.assignmentId.createdBy) : null;
   if (req.user.role === 'student' && String(row.studentId) !== req.user.id) {
-    return res.status(403).json({ error: 'Forbidden' });
+    return fail(res, 'Forbidden', 403);
   }
   if (req.user.role === 'teacher' && ownerId !== req.user.id) {
-    return res.status(403).json({ error: 'Forbidden' });
+    return fail(res, 'Forbidden', 403);
   }
   const full = path.join(config.uploadDir, row.fileUrl);
-  if (!fs.existsSync(full)) return res.status(404).json({ error: 'File missing' });
+  if (!fs.existsSync(full)) return fail(res, 'File missing', 404);
   res.download(full, row.originalFilename || 'submission');
 });
 
-export const list = asyncHandler(async (req, res) => {
+export const listProjects = asyncHandler(async (req, res) => {
   const assignmentId = req.query.assignmentId;
   if (!assignmentId || !mongoose.Types.ObjectId.isValid(assignmentId)) {
-    return res.status(400).json({ error: 'assignmentId query required' });
+    return fail(res, 'assignmentId query required', 400);
   }
   const { page, pageSize, offset } = parsePage(req);
 
@@ -89,7 +92,7 @@ export const list = asyncHandler(async (req, res) => {
     for (const p of rows) {
       data.push(await enrichProject(p));
     }
-    return res.json({
+    return ok(res, {
       data,
       page: 1,
       pageSize: data.length,
@@ -114,7 +117,7 @@ export const list = asyncHandler(async (req, res) => {
     data.push(enriched);
   }
 
-  res.json({
+  return ok(res, {
     data,
     page,
     pageSize,
@@ -123,23 +126,23 @@ export const list = asyncHandler(async (req, res) => {
   });
 });
 
-export const getById = asyncHandler(async (req, res) => {
+export const getProjectById = asyncHandler(async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ error: 'Invalid id' });
+    return fail(res, 'Invalid id', 400);
   }
   const p = await Project.findById(req.params.id)
     .populate('studentId', 'name')
     .populate({ path: 'assignmentId', select: 'title createdBy' })
     .lean();
 
-  if (!p) return res.status(404).json({ error: 'Project not found' });
+  if (!p) return fail(res, 'Project not found', 404);
   const ownerId = p.assignmentId?.createdBy ? String(p.assignmentId.createdBy) : null;
   const sid = p.studentId?._id ?? p.studentId;
   if (req.user.role === 'student' && String(sid) !== req.user.id) {
-    return res.status(403).json({ error: 'Forbidden' });
+    return fail(res, 'Forbidden', 403);
   }
   if (req.user.role === 'teacher' && ownerId !== req.user.id) {
-    return res.status(403).json({ error: 'Forbidden' });
+    return fail(res, 'Forbidden', 403);
   }
 
   const studentName = p.studentId?.name;
@@ -149,23 +152,34 @@ export const getById = asyncHandler(async (req, res) => {
   payload.studentName = studentName;
   payload.assignmentTitle = assignmentTitle;
 
-  res.json({ project: payload });
+  return ok(res, { project: payload });
 });
 
-export const create = asyncHandler(async (req, res) => {
+export const createProject = asyncHandler(async (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ error: 'File is required (PDF, DOC, DOCX)' });
+    return fail(res, 'File is required (PDF, DOC, DOCX)', 400);
   }
   const body = createFieldsSchema.parse(req.body);
   if (!mongoose.Types.ObjectId.isValid(body.assignmentId)) {
     fs.unlinkSync(req.file.path);
-    return res.status(400).json({ error: 'Invalid assignment id' });
+    return fail(res, 'Invalid assignment id', 400);
   }
 
   const assignment = await Assignment.findById(body.assignmentId).lean();
   if (!assignment) {
     fs.unlinkSync(req.file.path);
-    return res.status(404).json({ error: 'Assignment not found' });
+    return fail(res, 'Assignment not found', 404);
+  }
+  if (assignment.status === 'archived') {
+    fs.unlinkSync(req.file.path);
+    return fail(res, 'Assignment is archived', 400);
+  }
+  if (Date.now() > new Date(assignment.deadline).getTime()) {
+    if (assignment.status !== 'expired') {
+      await Assignment.updateOne({ _id: assignment._id, status: { $ne: 'archived' } }, { $set: { status: 'expired' } });
+    }
+    fs.unlinkSync(req.file.path);
+    return fail(res, 'Deadline expired', 400);
   }
 
   const existing = await Project.findOne({
@@ -174,7 +188,7 @@ export const create = asyncHandler(async (req, res) => {
   }).lean();
   if (existing) {
     fs.unlinkSync(req.file.path);
-    return res.status(409).json({ error: 'You already submitted for this assignment' });
+    return fail(res, 'You already submitted for this assignment', 409);
   }
 
   const teamMemberIds = parseTeamObjectIds(body.teamMembers);
@@ -218,9 +232,10 @@ export const create = asyncHandler(async (req, res) => {
     out.studentName = populated.studentId?.name;
     out.assignmentTitle = populated.assignmentId?.title;
 
-    res.status(201).json({ project: out });
+    return ok(res, { project: out }, 'Project submitted');
   } catch (e) {
     if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
     throw e;
   }
 });
+

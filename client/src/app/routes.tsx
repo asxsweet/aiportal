@@ -5,7 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import TeacherDashboard from './pages/TeacherDashboard';
 import StudentDashboard from './pages/StudentDashboard';
-import CreateAssignment from './pages/CreateAssignment';
+import TeacherAssignments from './pages/TeacherAssignments';
 import AssignmentDetail from './pages/AssignmentDetail';
 import ProjectSubmission from './pages/ProjectSubmission';
 import ProjectView from './pages/ProjectView';
@@ -28,10 +28,10 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/teacher/assignments/create',
+    path: '/teacher/assignments',
     element: (
       <ProtectedRoute role="teacher">
-        <CreateAssignment />
+        <TeacherAssignments />
       </ProtectedRoute>
     ),
   },

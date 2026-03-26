@@ -3,16 +3,16 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { config } from './config.js';
-import { errorHandler } from './middleware/errorHandler.js';
-import authRoutes from './routes/authRoutes.js';
-import assignmentRoutes from './routes/assignmentRoutes.js';
-import projectRoutes from './routes/projectRoutes.js';
-import commentRoutes from './routes/commentRoutes.js';
-import ratingRoutes from './routes/ratingRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import analyticsRoutes from './routes/analyticsRoutes.js';
-import studentRoutes from './routes/studentRoutes.js';
-import aiRoutes from './routes/aiRoutes.js';
+import { errorHandler } from './middlewares/error.middleware.js';
+import authRoutes from './routes/auth.routes.js';
+import assignmentRoutes from './routes/assignment.routes.js';
+import projectRoutes from './routes/project.routes.js';
+import commentRoutes from './routes/comment.routes.js';
+import ratingRoutes from './routes/rating.routes.js';
+import userRoutes from './routes/user.routes.js';
+import analyticsRoutes from './routes/analytics.routes.js';
+import studentRoutes from './routes/student.routes.js';
+import aiRoutes from './routes/ai.routes.js';
 
 const app = express();
 
@@ -59,7 +59,7 @@ app.use('/api/student', studentRoutes);
 app.use('/api/ai', aiRoutes);
 
 app.use((req, res) => {
-  res.status(404).json({ error: 'Not found', path: req.path });
+  res.status(404).json({ message: 'Not found', path: req.path });
 });
 
 app.use(errorHandler);

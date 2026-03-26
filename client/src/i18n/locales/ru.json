@@ -77,6 +77,7 @@
     "pendingSubmissions": "Ожидают проверки",
     "avgPerformance": "Средняя успеваемость",
     "recentAssignments": "Недавние задания",
+    "viewAll": "Смотреть все",
     "due": "Срок",
     "submissions": "Сдачи",
     "progress": "Прогресс",
@@ -119,6 +120,25 @@
     "toolsRequired": "Выберите хотя бы один инструмент.",
     "loadError": "Не удалось создать задание."
   },
+  "assignments": {
+    "title": "Задания",
+    "subtitle": "Управляйте заданиями в одном месте",
+    "add": "+ Добавить задание",
+    "editDeadline": "Изменить срок",
+    "archive": "В архив",
+    "restore": "Восстановить",
+    "delete": "Удалить",
+    "statusActive": "активно",
+    "statusExpired": "истекло",
+    "statusArchived": "архив",
+    "loadError": "Не удалось загрузить задания.",
+    "createError": "Не удалось создать задание.",
+    "updateError": "Не удалось обновить задание.",
+    "deleteError": "Не удалось удалить задание.",
+    "deleteConfirm": "Удалить это задание безвозвратно?",
+    "chooseFile": "Выбрать файл",
+    "noFileChosen": "Файл не выбран"
+  },
   "assignmentDetail": {
     "posted": "Опубликовано",
     "dueDate": "Срок сдачи",
@@ -132,7 +152,8 @@
     "student": "Ученик",
     "gradeProject": "Открыть проект",
     "loadError": "Не удалось загрузить задание.",
-    "instructor": "Преподаватель"
+    "instructor": "Преподаватель",
+    "deadlineExpired": "Срок истек"
   },
   "projectSubmit": {
     "title": "Сдача проекта",

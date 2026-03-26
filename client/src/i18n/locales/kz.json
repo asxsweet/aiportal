@@ -77,6 +77,7 @@
     "pendingSubmissions": "Тексеруді күтуде",
     "avgPerformance": "Орташа нәтиже",
     "recentAssignments": "Соңғы тапсырмалар",
+    "viewAll": "Барлығын көру",
     "due": "Мерзімі",
     "submissions": "Тапсырулар",
     "progress": "Прогресс",
@@ -119,6 +120,25 @@
     "toolsRequired": "Кем дегенде бір құралды таңдаңыз.",
     "loadError": "Тапсырма жасалмады."
   },
+  "assignments": {
+    "title": "Тапсырмалар",
+    "subtitle": "Барлық тапсырманы бір жерден басқарыңыз",
+    "add": "+ Тапсырма қосу",
+    "editDeadline": "Мерзімді өзгерту",
+    "archive": "Мұрағаттау",
+    "restore": "Қалпына келтіру",
+    "delete": "Жою",
+    "statusActive": "белсенді",
+    "statusExpired": "мерзімі өтті",
+    "statusArchived": "мұрағат",
+    "loadError": "Тапсырмалар жүктелмеді.",
+    "createError": "Тапсырма жасалмады.",
+    "updateError": "Тапсырма жаңартылмады.",
+    "deleteError": "Тапсырма жойылмады.",
+    "deleteConfirm": "Осы тапсырманы біржола жою керек пе?",
+    "chooseFile": "Файл таңдау",
+    "noFileChosen": "Файл таңдалмады"
+  },
   "assignmentDetail": {
     "posted": "Жарияланған",
     "dueDate": "Соңғы мерзім",
@@ -132,7 +152,8 @@
     "student": "Студент",
     "gradeProject": "Жобаны ашу",
     "loadError": "Тапсырма жүктелмеді.",
-    "instructor": "Мұғалім"
+    "instructor": "Мұғалім",
+    "deadlineExpired": "Уақыт өтті"
   },
   "projectSubmit": {
     "title": "Жобаны жіберу",

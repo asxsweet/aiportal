@@ -16,6 +16,12 @@ const assignmentSchema = new mongoose.Schema(
       type: Date,
       required: [true, 'Deadline is required'],
     },
+    status: {
+      type: String,
+      enum: ['active', 'expired', 'archived'],
+      default: 'active',
+      index: true,
+    },
     /** Relative path under upload dir, or empty */
     fileUrl: {
       type: String,
@@ -45,5 +51,6 @@ const assignmentSchema = new mongoose.Schema(
 );
 
 assignmentSchema.index({ createdBy: 1, deadline: -1 });
+assignmentSchema.index({ createdBy: 1, status: 1, deadline: -1 });
 
 export const Assignment = mongoose.model('Assignment', assignmentSchema);
