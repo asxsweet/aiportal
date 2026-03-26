@@ -1,0 +1,259 @@
+import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router';
+import ToolBadge from '../components/ToolBadge';
+import { Calendar, FileDown, Upload, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/contexts/AuthContext';
+import { api, getErrorMessage } from '@/lib/api';
+import { downloadBlob } from '@/lib/download';
+import SidebarLayout from '../components/SidebarLayout';
+
+type Assignment = {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  tools: ('ev3' | 'tinkercad')[];
+  attachmentOriginalName?: string | null;
+  instructorName?: string | null;
+  createdAt?: string;
+};
+
+type ProjectRow = {
+  id: string;
+  title: string;
+  studentName?: string;
+  status: string;
+  submittedAt: string;
+};
+
+export default function AssignmentDetail() {
+  const { id } = useParams();
+  const { t } = useTranslation();
+  const { user } = useAuth();
+  const role = user?.role ?? 'student';
+  const [assignment, setAssignment] = useState<Assignment | null>(null);
+  const [submissions, setSubmissions] = useState<ProjectRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data } = await api.get<{ assignment: Assignment }>(`/api/assignments/${id}`);
+        if (cancelled) return;
+        setAssignment(data.assignment);
+        if (user?.role === 'teacher') {
+          const pRes = await api.get<{ data: ProjectRow[]; totalPages: number }>(
+            '/api/projects',
+            { params: { assignmentId: id, page, pageSize: 10 } },
+          );
+          if (!cancelled) {
+            setSubmissions(pRes.data.data);
+            setTotalPages(pRes.data.totalPages);
+          }
+        }
+      } catch (e) {
+        if (!cancelled) setError(getErrorMessage(e, t('assignmentDetail.loadError')));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [id, user?.role, page, t]);
+
+  if (loading) {
+    return (
+      <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
+        <div className="p-8 flex items-center justify-center text-gray-500">{t('loading')}</div>
+      </SidebarLayout>
+    );
+  }
+
+  if (!assignment) {
+    return (
+      <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
+        <div className="p-8 text-red-600">{error ?? t('assignmentDetail.loadError')}</div>
+      </SidebarLayout>
+    );
+  }
+
+  return (
+    <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
+      <div className="p-8">
+        <div className="max-w-4xl mx-auto">
+          {error && (
+            <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>
+          )}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
+            <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold mb-3">{assignment.title}</h1>
+                <div className="flex items-center gap-4 text-sm text-gray-600 flex-wrap">
+                  <span className="flex items-center gap-1">
+                    <User className="w-4 h-4" />
+                    {assignment.instructorName ?? t('assignmentDetail.instructor')}
+                  </span>
+                  {assignment.createdAt && (
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      {t('assignmentDetail.posted')}:{' '}
+                      {new Date(assignment.createdAt).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-lg flex-wrap">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">{t('assignmentDetail.dueDate')}</p>
+                <p className="font-semibold text-lg">
+                  {new Date(assignment.dueDate).toLocaleDateString(undefined, {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+              </div>
+              <div className="h-12 w-px bg-gray-300 hidden sm:block" />
+              <div>
+                <p className="text-sm text-gray-600 mb-2">{t('assignmentDetail.requiredTools')}</p>
+                <div className="flex gap-2 flex-wrap">
+                  {assignment.tools.map((tool) => (
+                    <ToolBadge key={tool} tool={tool} size="md" />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
+            <h2 className="text-xl font-semibold mb-4">{t('assignmentDetail.description')}</h2>
+            <div className="prose prose-sm max-w-none">
+              <p className="whitespace-pre-line text-gray-700 leading-relaxed">
+                {assignment.description}
+              </p>
+            </div>
+          </div>
+
+          {assignment.attachmentOriginalName && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
+              <h2 className="text-xl font-semibold mb-4">{t('assignmentDetail.attachments')}</h2>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <FileDown className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium">{assignment.attachmentOriginalName}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      void downloadBlob(
+                        `/api/assignments/${assignment.id}/attachment`,
+                        assignment.attachmentOriginalName || 'file',
+                      )
+                    }
+                    className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm"
+                  >
+                    {t('download')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {role === 'teacher' && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
+              <h2 className="text-xl font-semibold mb-4">{t('assignmentDetail.submissions')}</h2>
+              {submissions.length === 0 ? (
+                <p className="text-gray-500">{t('assignmentDetail.noSubmissions')}</p>
+              ) : (
+                <>
+                  <ul className="divide-y divide-gray-100">
+                    {submissions.map((s) => (
+                      <li
+                        key={s.id}
+                        className="py-4 flex items-center justify-between flex-wrap gap-2"
+                      >
+                        <div>
+                          <p className="font-medium">{s.title}</p>
+                          <p className="text-sm text-gray-600">
+                            {t('assignmentDetail.student')}: {s.studentName}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {new Date(s.submittedAt).toLocaleString()}
+                          </p>
+                        </div>
+                        <Link
+                          to={`/project/${s.id}`}
+                          className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm"
+                        >
+                          {t('assignmentDetail.gradeProject')}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  {totalPages > 1 && (
+                    <div className="flex gap-2 mt-4">
+                      <button
+                        type="button"
+                        disabled={page <= 1}
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        className="px-3 py-1 border rounded-lg text-sm disabled:opacity-50"
+                      >
+                        {t('back')}
+                      </button>
+                      <span className="text-sm text-gray-600 self-center">
+                        {t('pagination', { page, total: totalPages })}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={page >= totalPages}
+                        onClick={() => setPage((p) => p + 1)}
+                        className="px-3 py-1 border rounded-lg text-sm disabled:opacity-50"
+                      >
+                        →
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+
+          <div className="flex gap-4 flex-wrap">
+            {role === 'student' && (
+              <Link
+                to={`/assignment/${id}/submit`}
+                className="flex-1 min-w-[200px] py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold flex items-center justify-center gap-2"
+              >
+                <Upload className="w-5 h-5" />
+                {t('assignmentDetail.submitProject')}
+              </Link>
+            )}
+            <Link
+              to={role === 'teacher' ? '/teacher/dashboard' : '/student/dashboard'}
+              className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-all font-semibold"
+            >
+              {t('assignmentDetail.backDashboard')}
+            </Link>
+          </div>
+        </div>
+      </div>
+    </SidebarLayout>
+  );
+}
