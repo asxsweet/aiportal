@@ -1,3 +1,6 @@
+import path from 'path';
+import { decodeOriginalFileName } from './filename.js';
+
 function idRef(ref) {
   if (ref == null) return undefined;
   if (typeof ref === 'object' && ref._id) return String(ref._id);
@@ -31,6 +34,8 @@ export function formatUser(doc) {
 export function formatAssignment(doc, instructorName) {
   if (!doc) return null;
   const o = doc.toObject ? doc.toObject() : doc;
+  const storedName = o.fileUrl ? path.basename(o.fileUrl) : null;
+  const originalFileName = decodeOriginalFileName(o.attachmentOriginalName || storedName || '');
   return {
     id: String(o._id),
     title: o.title,
@@ -39,7 +44,9 @@ export function formatAssignment(doc, instructorName) {
     status: o.status || 'active',
     tools: o.tools || [],
     attachmentPath: o.fileUrl || '',
-    attachmentOriginalName: o.attachmentOriginalName || null,
+    storedName,
+    originalFileName: originalFileName || null,
+    attachmentOriginalName: decodeOriginalFileName(o.attachmentOriginalName || '') || null,
     createdBy: idRef(o.createdBy),
     instructorName: instructorName || undefined,
     createdAt: o.createdAt,
@@ -71,6 +78,8 @@ export function formatRating(r) {
 export function formatProject(doc, extras = {}) {
   if (!doc) return null;
   const o = doc.toObject ? doc.toObject() : doc;
+  const storedName = o.fileUrl ? path.basename(o.fileUrl) : null;
+  const originalFileName = decodeOriginalFileName(o.originalFilename || storedName || '');
   return {
     id: String(o._id),
     assignmentId: idRef(o.assignmentId),
@@ -79,7 +88,10 @@ export function formatProject(doc, extras = {}) {
     title: o.title,
     description: o.description,
     filePath: o.fileUrl,
-    originalFilename: o.originalFilename,
+    fileUrl: o.fileUrl,
+    storedName,
+    originalFileName: originalFileName || null,
+    originalFilename: decodeOriginalFileName(o.originalFilename || '') || null,
     tools: o.tools || [],
     status: o.status,
     submittedAt: o.createdAt,

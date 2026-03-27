@@ -316,7 +316,10 @@
     "placeholder": "Ask a question…",
     "send": "Send",
     "quickEvaluate": "Quick evaluate",
-    "unavailable": "AI unavailable. Try again."
+    "unavailable": "AI unavailable. Try again.",
+    "aiActive": "AI is active and generating response",
+    "aiNotResponding": "AI is not responding / failed",
+    "aiFailed": "AI evaluation failed or not available"
   },
   "settings": {
     "title": "Settings",

@@ -16,6 +16,13 @@ type EvalResult = {
   feedback: string;
 };
 
+type EvalResponse = {
+  aiStatus: 'active' | 'failed';
+  aiStatusText: string;
+  result: EvalResult | null;
+  errorMessage: string | null;
+};
+
 export default function AiAssistantPanel({ projectText, assignmentText = '', selectedTools = [] }: Props) {
   const { t, i18n } = useTranslation();
   const [question, setQuestion] = useState('');
@@ -23,6 +30,8 @@ export default function AiAssistantPanel({ projectText, assignmentText = '', sel
   const [busy, setBusy] = useState(false);
   const [evalBusy, setEvalBusy] = useState(false);
   const [evalResult, setEvalResult] = useState<EvalResult | null>(null);
+  const [evalStatus, setEvalStatus] = useState<'idle' | 'loading' | 'active' | 'failed'>('idle');
+  const [evalStatusText, setEvalStatusText] = useState('');
 
   const language = useMemo(() => {
     const raw = (i18n.resolvedLanguage || i18n.language || 'en').toLowerCase();
@@ -63,15 +72,27 @@ export default function AiAssistantPanel({ projectText, assignmentText = '', sel
   const onEvaluate = async () => {
     if (!projectText.trim() || evalBusy) return;
     setEvalBusy(true);
+    setEvalStatus('loading');
+    setEvalStatusText(t('aiAssistant.aiActive'));
     try {
-      const { data } = await api.post<EvalResult>('/api/ai/evaluate', {
+      const { data } = await api.post<EvalResponse>('/api/ai/evaluate', {
         projectText: projectShort,
         assignmentText: assignmentShort,
         selectedTools,
         language,
       });
-      setEvalResult(data);
+      if (data.aiStatus === 'active' && data.result) {
+        setEvalResult(data.result);
+        setEvalStatus('active');
+        setEvalStatusText(data.aiStatusText || t('aiAssistant.aiActive'));
+      } else {
+        setEvalResult(null);
+        setEvalStatus('failed');
+        setEvalStatusText(data.errorMessage || data.aiStatusText || t('aiAssistant.aiNotResponding'));
+      }
     } catch {
+      setEvalStatus('failed');
+      setEvalStatusText(t('aiAssistant.aiFailed'));
       setEvalResult({
         scores: { idea: 0, algorithm: 0, technical: 0, tools: 0 },
         feedback: t('aiAssistant.unavailable'),
@@ -107,6 +128,19 @@ export default function AiAssistantPanel({ projectText, assignmentText = '', sel
             <div>{t('projectView.criteria.tools')}: {evalResult.scores.tools}</div>
           </div>
           <p className="text-gray-700">{evalResult.feedback}</p>
+        </div>
+      )}
+      {evalStatus !== 'idle' && (
+        <div
+          className={`mb-4 p-3 rounded-lg border text-sm ${
+            evalStatus === 'failed'
+              ? 'bg-red-50 border-red-100 text-red-700'
+              : evalStatus === 'loading'
+                ? 'bg-amber-50 border-amber-100 text-amber-700'
+                : 'bg-emerald-50 border-emerald-100 text-emerald-700'
+          }`}
+        >
+          {evalStatusText}
         </div>
       )}
 

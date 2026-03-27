@@ -1,8 +1,8 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { randomUUID } from 'crypto';
 import { config } from '../config.js';
+import { safeBaseNameFromUpload } from '../utils/filename.js';
 
 const allowedExt = new Set(['.pdf', '.doc', '.docx']);
 
@@ -16,14 +16,13 @@ function makeStorage(subfolder) {
   return multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, dest),
     filename: (_req, file, cb) => {
-      const ext = path.extname(file.originalname).toLowerCase();
-      cb(null, `${randomUUID()}${ext}`);
+      cb(null, safeBaseNameFromUpload(file.originalname));
     },
   });
 }
 
 function fileFilter(_req, file, cb) {
-  const ext = path.extname(file.originalname).toLowerCase();
+  const ext = path.extname(safeBaseNameFromUpload(file.originalname)).toLowerCase();
   if (!allowedExt.has(ext)) {
     return cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'Only PDF, DOC, and DOCX are allowed'));
   }
@@ -45,7 +44,7 @@ export const projectUpload = multer({
 const imageExts = new Set(['.jpg', '.jpeg', '.jfif', '.png', '.webp', '.gif']);
 
 function imageFilter(_req, file, cb) {
-  const ext = path.extname(file.originalname).toLowerCase();
+  const ext = path.extname(safeBaseNameFromUpload(file.originalname)).toLowerCase();
   if (!imageExts.has(ext)) {
     return cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'Only JPG, PNG, WebP, or GIF images'));
   }

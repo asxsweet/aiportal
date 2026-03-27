@@ -7,6 +7,7 @@ import { config } from '../config.js';
 import { formatAssignment } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ok, fail } from '../utils/helpers.js';
+import { safeBaseNameFromUpload } from '../utils/filename.js';
 
 const toolsSchema = z.array(z.enum(['ev3', 'tinkercad'])).min(1);
 const createFieldsSchema = z.object({
@@ -78,7 +79,7 @@ export const createAssignment = asyncHandler(async (req, res) => {
   let fileUrl = ''; let attachmentOriginalName = '';
   if (req.file) {
     fileUrl = path.relative(config.uploadDir, req.file.path).replace(/\\/g, '/');
-    attachmentOriginalName = req.file.originalname;
+    attachmentOriginalName = safeBaseNameFromUpload(req.file.originalname);
   }
   try {
     const doc = await Assignment.create({ title: body.title, description: body.description, deadline: new Date(body.deadline), status: 'active', fileUrl, attachmentOriginalName, tools: body.tools, createdBy: req.user.id });

@@ -31,7 +31,9 @@ type Project = {
   submittedAt: string;
   tools: ('ev3' | 'tinkercad')[];
   teamMembers?: string[];
-  originalFilename: string;
+  originalFilename?: string;
+  originalFileName?: string;
+  storedName?: string;
   studentName?: string;
   rating: Rating | null;
 };
@@ -123,6 +125,8 @@ export default function ProjectView() {
         ? Math.round(r.aiOverall)
         : '—';
 
+  const displayFileName = project.originalFileName || project.originalFilename || project.storedName || 'file';
+
   return (
     <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
       <div className="p-8">
@@ -184,12 +188,12 @@ export default function ProjectView() {
                 <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <FileDown className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="font-medium">{project.originalFilename}</p>
+                <p className="font-medium">{displayFileName}</p>
               </div>
               <button
                 type="button"
                 onClick={() =>
-                  void downloadBlob(`/api/projects/${project.id}/file`, project.originalFilename)
+                  void downloadBlob(`/api/projects/${project.id}/file`, displayFileName)
                 }
                 className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm"
               >

@@ -316,7 +316,10 @@
     "placeholder": "Сұрақ жазыңыз…",
     "send": "Жіберу",
     "quickEvaluate": "Жылдам бағалау",
-    "unavailable": "AI қолжетімсіз. Қайта көріңіз."
+    "unavailable": "AI қолжетімсіз. Қайта көріңіз.",
+    "aiActive": "AI is active and generating response",
+    "aiNotResponding": "AI is not responding / failed",
+    "aiFailed": "AI evaluation failed or not available"
   },
   "settings": {
     "title": "Баптаулар",

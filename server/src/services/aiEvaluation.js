@@ -79,10 +79,36 @@ export function evaluateProjectMock({ title, description, tools }) {
   };
 }
 
+function automatedPreviewByLanguage(language) {
+  if (language === 'ru') return 'Это автоматическая предварительная оценка — итоговую оценку выставит преподаватель.';
+  if (language === 'kz') return 'Бұл автоматты алдын ала бағалау — ресми бағаны мұғалім қояды.';
+  return 'This is an automated preview — your teacher will give the official grade.';
+}
+
+function fallbackFeedbackByLanguage({ language, len }) {
+  const lines = [];
+  if (language === 'ru') {
+    if (len < 120) lines.push('Добавьте больше деталей: цель, метод и результат.');
+    else lines.push('Описание проекта в целом достаточно понятное.');
+    lines.push(automatedPreviewByLanguage(language));
+    return lines.join(' ');
+  }
+  if (language === 'kz') {
+    if (len < 120) lines.push('Мақсат, әдіс және нәтижені нақтырақ қосыңыз.');
+    else lines.push('Жоба сипаттамасы жалпы түсінікті берілген.');
+    lines.push(automatedPreviewByLanguage(language));
+    return lines.join(' ');
+  }
+  if (len < 120) lines.push('Consider expanding the description with goals, method, and results.');
+  else lines.push('The write-up covers the project scope reasonably well.');
+  lines.push(automatedPreviewByLanguage(language));
+  return lines.join(' ');
+}
+
 /**
  * Uses Google Gemini (free tier API key from AI Studio) when GEMINI_API_KEY is set; otherwise mock heuristics.
  */
-export async function evaluateProject({ title, description, tools }) {
+export async function evaluateProject({ title, description, tools, language = 'en' }) {
   if (config.geminiApiKey) {
     try {
       const out = await evaluateWithGemini({
@@ -91,6 +117,7 @@ export async function evaluateProject({ title, description, tools }) {
         title,
         description,
         tools,
+        language,
       });
       console.info(`[ai] Gemini OK — model=${config.geminiModel}, avg≈${Math.round((out.scores.idea + out.scores.algorithm + out.scores.technical + out.scores.toolsUsage) / 4)}`);
       return out;
@@ -98,7 +125,14 @@ export async function evaluateProject({ title, description, tools }) {
       console.warn('[ai] Gemini evaluation failed, using heuristic fallback:', e?.message || e);
     }
   }
-  return evaluateProjectMock({ title, description, tools });
+  const mock = evaluateProjectMock({ title, description, tools });
+  return {
+    ...mock,
+    feedback: fallbackFeedbackByLanguage({
+      language,
+      len: `${title}\n${description}`.trim().length,
+    }),
+  };
 }
 
 export function averageAiScore(scores) {

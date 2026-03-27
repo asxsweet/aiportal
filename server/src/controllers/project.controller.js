@@ -8,11 +8,13 @@ import { formatProject, formatRating } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { evaluateProject, averageAiScore } from '../services/aiEvaluation.js';
 import { ok, fail } from '../utils/helpers.js';
+import { safeBaseNameFromUpload } from '../utils/filename.js';
 
 const createFieldsSchema = z.object({
   assignmentId: z.string(),
   title: z.string().min(1).max(500),
   description: z.string().min(1),
+  language: z.enum(['en', 'ru', 'kz']).optional().default('en'),
   tools: z.string().transform((s) => JSON.parse(s)).pipe(z.array(z.enum(['ev3', 'tinkercad'])).min(1)),
   teamMembers: z
     .string()
@@ -201,7 +203,7 @@ export const createProject = asyncHandler(async (req, res) => {
       title: body.title,
       description: body.description,
       fileUrl: relPath,
-      originalFilename: req.file.originalname,
+      originalFilename: safeBaseNameFromUpload(req.file.originalname),
       tools: body.tools,
       teamMembers: teamMemberIds,
     });
@@ -210,6 +212,7 @@ export const createProject = asyncHandler(async (req, res) => {
       title: body.title,
       description: body.description,
       tools: body.tools,
+      language: body.language,
     });
     const aiAvg = averageAiScore(ai.scores);
     await Rating.create({

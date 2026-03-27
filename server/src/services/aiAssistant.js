@@ -61,6 +61,16 @@ function truncateToMaxSentences(s, maxSentences) {
   return parts.slice(0, maxSentences).join(' ').trim();
 }
 
+function textLooksLikeRequestedLanguage(text, lang) {
+  const s = String(text || '').toLowerCase();
+  if (!s.trim()) return false;
+  const cyr = (s.match(/[а-яәіңғүұқөһё]/gi) || []).length;
+  const lat = (s.match(/[a-z]/gi) || []).length;
+  if (lang === 'en') return cyr <= Math.max(3, lat * 0.15);
+  if (lang === 'ru' || lang === 'kz') return cyr >= Math.max(4, lat * 0.2);
+  return true;
+}
+
 const STOPWORDS = {
   en: new Set([
     'the','and','or','to','of','a','an','in','on','for','with','without','is','are','was','were','be','it','that','this',
@@ -307,6 +317,7 @@ Return only the answer text (no bullets, no quotes).`;
       lastAnswer = trimmed;
 
       if (countWords(trimmed) < 5) continue;
+      if (!textLooksLikeRequestedLanguage(trimmed, lang)) continue;
       if (!isLikelyRelevant({ answer: trimmed, question: q, selectedTools, lang })) continue;
 
       return { answer: trimmed };
@@ -346,6 +357,9 @@ Return only JSON.`;
       responseMimeType: 'application/json',
     });
     const parsed = evaluateResponseSchema.parse(JSON.parse(stripJsonFence(raw)));
+    if (!textLooksLikeRequestedLanguage(parsed.feedback, lang)) {
+      throw new Error('Unexpected language in model output');
+    }
     return {
       scores: {
         idea: clampInt(parsed.idea, 0, 10),

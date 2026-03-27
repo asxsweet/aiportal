@@ -316,7 +316,10 @@
     "placeholder": "Введите вопрос…",
     "send": "Отправить",
     "quickEvaluate": "Быстрая оценка",
-    "unavailable": "ИИ недоступен. Попробуйте снова."
+    "unavailable": "ИИ недоступен. Попробуйте снова.",
+    "aiActive": "AI is active and generating response",
+    "aiNotResponding": "AI is not responding / failed",
+    "aiFailed": "AI evaluation failed or not available"
   },
   "settings": {
     "title": "Настройки",

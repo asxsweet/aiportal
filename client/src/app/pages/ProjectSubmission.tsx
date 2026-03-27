@@ -10,7 +10,7 @@ import { api, getErrorMessage } from '@/lib/api';
 export default function ProjectSubmission() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -22,6 +22,13 @@ export default function ProjectSubmission() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [locked, setLocked] = useState(false);
+
+  const language = (() => {
+    const raw = (i18n.resolvedLanguage || i18n.language || 'en').toLowerCase();
+    if (raw.startsWith('ru')) return 'ru';
+    if (raw.startsWith('kz')) return 'kz';
+    return 'en';
+  })();
 
   const handleToolToggle = (tool: 'ev3' | 'tinkercad') => {
     setFormData((prev) => ({
@@ -85,6 +92,7 @@ export default function ProjectSubmission() {
       fd.append('assignmentId', id);
       fd.append('title', formData.title);
       fd.append('description', formData.description);
+      fd.append('language', language);
       fd.append('tools', JSON.stringify(formData.tools));
       fd.append('teamMembers', JSON.stringify(formData.teamMembers.map((x) => x.trim())));
       fd.append('file', file);

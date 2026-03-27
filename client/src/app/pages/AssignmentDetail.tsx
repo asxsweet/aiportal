@@ -16,6 +16,8 @@ type Assignment = {
   status: 'active' | 'expired' | 'archived';
   tools: ('ev3' | 'tinkercad')[];
   attachmentOriginalName?: string | null;
+  originalFileName?: string | null;
+  storedName?: string | null;
   instructorName?: string | null;
   createdAt?: string;
 };
@@ -93,6 +95,8 @@ export default function AssignmentDetail() {
   }
   const isExpired = assignment.status === 'expired';
 
+  const attachmentName = assignment.originalFileName || assignment.attachmentOriginalName || assignment.storedName || 'file';
+
   return (
     <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
       <div className="p-8">
@@ -159,7 +163,7 @@ export default function AssignmentDetail() {
             </div>
           </div>
 
-          {assignment.attachmentOriginalName && (
+          {(assignment.originalFileName || assignment.attachmentOriginalName || assignment.storedName) && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
               <h2 className="text-xl font-semibold mb-4">{t('assignmentDetail.attachments')}</h2>
               <div className="space-y-3">
@@ -169,7 +173,7 @@ export default function AssignmentDetail() {
                       <FileDown className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="font-medium">{assignment.attachmentOriginalName}</p>
+                      <p className="font-medium">{attachmentName}</p>
                     </div>
                   </div>
                   <button
@@ -177,7 +181,7 @@ export default function AssignmentDetail() {
                     onClick={() =>
                       void downloadBlob(
                         `/api/assignments/${assignment.id}/attachment`,
-                        assignment.attachmentOriginalName || 'file',
+                        attachmentName,
                       )
                     }
                     className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm"

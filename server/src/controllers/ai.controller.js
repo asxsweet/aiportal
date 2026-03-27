@@ -26,7 +26,27 @@ export const assist = asyncHandler(async (req, res) => {
 
 export const evaluate = asyncHandler(async (req, res) => {
   const body = evaluateSchema.parse(req.body);
-  const out = await evaluateWithAi(body);
-  return ok(res, out);
+  const timeoutMs = 20_000;
+  try {
+    const out = await Promise.race([
+      evaluateWithAi(body),
+      new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('AI_EVALUATION_TIMEOUT')), timeoutMs);
+      }),
+    ]);
+    return ok(res, {
+      aiStatus: 'active',
+      aiStatusText: 'AI is active and generating response',
+      result: out,
+      errorMessage: null,
+    });
+  } catch {
+    return ok(res, {
+      aiStatus: 'failed',
+      aiStatusText: 'AI is not responding / failed',
+      result: null,
+      errorMessage: 'AI evaluation failed or not available',
+    });
+  }
 });
 

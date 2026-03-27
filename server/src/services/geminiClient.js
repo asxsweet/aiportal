@@ -47,9 +47,9 @@ function delay(ms) {
 }
 
 /**
- * @param {{ apiKey: string; model: string; title: string; description: string; tools: string[] }} opts
+ * @param {{ apiKey: string; model: string; title: string; description: string; tools: string[]; language?: 'en'|'ru'|'kz' }} opts
  */
-export async function evaluateWithGemini({ apiKey, model, title, description, tools }) {
+export async function evaluateWithGemini({ apiKey, model, title, description, tools, language = 'en' }) {
   const toolList = Array.isArray(tools) ? tools : [];
   const toolHuman = toolList.map((t) => TOOL_LABELS[t] || t).join(', ') || 'not specified';
 
@@ -57,7 +57,7 @@ export async function evaluateWithGemini({ apiKey, model, title, description, to
 Score each dimension 0–100 as integers. Be fair: very short or vague descriptions should score lower on technical depth.
 Respond with JSON only, no markdown, matching this exact shape:
 {"idea":number,"algorithm":number,"technical":number,"toolsUsage":number,"feedback":string}
-feedback: 2–5 sentences, constructive, encouraging. Use the same primary language as the student's description when it is clearly Kazakh, Russian, or English; otherwise English.`;
+feedback: 2–5 sentences, constructive, encouraging. The feedback language MUST be exactly ${language === 'ru' ? 'Russian' : language === 'kz' ? 'Kazakh' : 'English'} (no mixed language).`;
 
   const user = `Project title: ${title}
 
