@@ -18,7 +18,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: config.clientOrigin,
+    origin: ['http://localhost:5173', 'https://aiportal-five.vercel.app'],
     credentials: true,
   }),
 );
