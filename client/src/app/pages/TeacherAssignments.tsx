@@ -19,9 +19,9 @@ type AssignmentRow = {
 };
 
 function statusTone(status: AssignmentStatus) {
-  if (status === 'active') return 'bg-emerald-100 text-emerald-700';
-  if (status === 'expired') return 'bg-red-100 text-red-700';
-  return 'bg-gray-200 text-gray-700';
+  if (status === 'active') return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300';
+  if (status === 'expired') return 'bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300';
+  return 'bg-gray-200 text-gray-700 dark:bg-zinc-700 dark:text-zinc-200';
 }
 
 function statusLabel(status: AssignmentStatus, t: (k: string) => string) {
@@ -147,12 +147,12 @@ export default function TeacherAssignments() {
 
   return (
     <SidebarLayout role="teacher">
-      <div className="p-6 md:p-8">
+      <div className="p-6 md:p-8 transition-colors">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6 gap-3">
             <div>
-              <h1 className="text-3xl font-bold">{t('assignments.title')}</h1>
-              <p className="text-gray-600 mt-1">{t('assignments.subtitle')}</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-zinc-50">{t('assignments.title')}</h1>
+              <p className="text-gray-600 dark:text-zinc-400 mt-1">{t('assignments.subtitle')}</p>
             </div>
             <button
               type="button"
@@ -168,29 +168,29 @@ export default function TeacherAssignments() {
           </div>
 
           {error && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">{error}</div>
+            <div className="mb-4 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 px-4 py-3 text-sm">{error}</div>
           )}
 
           {loading ? (
-            <div className="py-16 text-center text-gray-500">{t('loading')}</div>
+            <div className="py-16 text-center text-gray-500 dark:text-zinc-400">{t('loading')}</div>
           ) : sorted.length === 0 ? (
-            <div className="rounded-xl border border-gray-200 bg-white p-10 text-center text-gray-500">{t('empty')}</div>
+            <div className="rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-10 text-center text-gray-500 dark:text-zinc-400">{t('empty')}</div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {sorted.map((row) => (
                 <article
                   key={row.id}
                   onClick={() => navigate(`/assignment/${row.id}`)}
-                  className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-blue-200 transition-all cursor-pointer"
+                  className="rounded-xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700 transition-all cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-lg font-semibold leading-tight">{row.title}</h3>
+                    <h3 className="text-lg font-semibold leading-tight text-gray-900 dark:text-zinc-50">{row.title}</h3>
                     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusTone(row.status)}`}>
                       {statusLabel(row.status, t)}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600 mt-2 line-clamp-2">{row.description}</p>
-                  <div className="mt-3 flex items-center gap-2 text-sm text-gray-700">
+                  <p className="text-sm text-gray-600 dark:text-zinc-400 mt-2 line-clamp-2">{row.description}</p>
+                  <div className="mt-3 flex items-center gap-2 text-sm text-gray-700 dark:text-zinc-300">
                     <Clock className="w-4 h-4" />
                     {new Date(row.dueDate).toLocaleString([], {
                       day: '2-digit',
@@ -207,7 +207,7 @@ export default function TeacherAssignments() {
                         e.stopPropagation();
                         navigate(`/assignment/${row.id}`);
                       }}
-                      className="px-3 py-1.5 text-sm rounded-lg border border-blue-300 text-blue-700 hover:bg-blue-50 inline-flex items-center gap-1.5"
+                      className="px-3 py-1.5 text-sm rounded-lg border border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/40 inline-flex items-center gap-1.5 transition-colors"
                     >
                       <Eye className="w-4 h-4" />
                       {t('viewDetails')}
@@ -219,7 +219,7 @@ export default function TeacherAssignments() {
                         setEditTarget(row);
                         setDeadline(row.dueDate.slice(0, 16));
                       }}
-                      className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 hover:bg-gray-50 inline-flex items-center gap-1.5"
+                      className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 inline-flex items-center gap-1.5 transition-colors"
                     >
                       <Pencil className="w-4 h-4" />
                       {t('assignments.editDeadline')}
@@ -231,7 +231,7 @@ export default function TeacherAssignments() {
                         void onArchiveToggle(row);
                       }}
                       disabled={busy}
-                      className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 hover:bg-gray-50 inline-flex items-center gap-1.5"
+                      className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 inline-flex items-center gap-1.5 transition-colors"
                     >
                       {row.status === 'archived' ? <RotateCcw className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
                       {row.status === 'archived' ? t('assignments.restore') : t('assignments.archive')}
@@ -243,7 +243,7 @@ export default function TeacherAssignments() {
                         void onDelete(row);
                       }}
                       disabled={busy}
-                      className="px-3 py-1.5 text-sm rounded-lg border border-red-300 text-red-700 hover:bg-red-50 inline-flex items-center gap-1.5"
+                      className="px-3 py-1.5 text-sm rounded-lg border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/40 inline-flex items-center gap-1.5 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                       {t('assignments.delete')}
@@ -258,9 +258,9 @@ export default function TeacherAssignments() {
 
       {(openCreate || editTarget) && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl rounded-3xl border border-gray-200 bg-white shadow-2xl">
-            <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">
+          <div className="w-full max-w-2xl rounded-3xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-2xl transition-colors">
+            <div className="px-5 py-4 border-b border-gray-200 dark:border-zinc-700 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-zinc-50">
                 {editTarget ? t('assignments.editDeadline') : t('assignments.add')}
               </h2>
               <button
@@ -269,7 +269,7 @@ export default function TeacherAssignments() {
                   setOpenCreate(false);
                   setEditTarget(null);
                 }}
-                className="p-1 rounded-md hover:bg-gray-100"
+                className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-700 dark:text-zinc-300 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -279,32 +279,32 @@ export default function TeacherAssignments() {
               {!editTarget && (
                 <>
                   <label className="block">
-                    <span className="text-sm font-medium text-gray-700">{t('createAssignment.assignmentTitle')}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{t('createAssignment.assignmentTitle')}</span>
                     <input
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="mt-1.5 w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="mt-1.5 w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-medium text-gray-700">{t('createAssignment.description')}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{t('createAssignment.description')}</span>
                     <textarea
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       rows={4}
-                      className="mt-1.5 w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="mt-1.5 w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </label>
                 </>
               )}
 
               <label className="block">
-                <span className="text-sm font-medium text-gray-700">{t('createAssignment.deadline')}</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{t('createAssignment.deadline')}</span>
                 <input
                   type="datetime-local"
                   value={deadline}
                   onChange={(e) => setDeadline(e.target.value)}
-                  className="mt-1.5 w-full px-3 py-2.5 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="mt-1.5 w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </label>
 
@@ -314,21 +314,21 @@ export default function TeacherAssignments() {
                     <button
                       type="button"
                       onClick={() => onToggleTool('ev3')}
-                      className={`px-3 py-2 rounded-lg border text-sm ${tools.includes('ev3') ? 'border-orange-500 bg-orange-50' : 'border-gray-300'}`}
+                      className={`px-3 py-2 rounded-lg border text-sm transition-colors ${tools.includes('ev3') ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/40 dark:text-orange-200' : 'border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-zinc-200'}`}
                     >
                       EV3
                     </button>
                     <button
                       type="button"
                       onClick={() => onToggleTool('tinkercad')}
-                      className={`px-3 py-2 rounded-lg border text-sm ${tools.includes('tinkercad') ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
+                      className={`px-3 py-2 rounded-lg border text-sm transition-colors ${tools.includes('tinkercad') ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 dark:text-blue-200' : 'border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-zinc-200'}`}
                     >
                       Tinkercad
                     </button>
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-700">{t('createAssignment.attach')}</span>
-                    <div className="mt-1.5 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-4">
+                    <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{t('createAssignment.attach')}</span>
+                    <div className="mt-1.5 rounded-xl border-2 border-dashed border-gray-300 dark:border-zinc-600 bg-gray-50 dark:bg-zinc-950/50 p-4">
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -339,12 +339,12 @@ export default function TeacherAssignments() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-300 hover:bg-gray-100 text-sm font-medium"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-800 text-sm font-medium text-gray-700 dark:text-zinc-200 transition-colors"
                       >
                         <Upload className="w-4 h-4" />
                         {t('assignments.chooseFile')}
                       </button>
-                      <p className="mt-2 text-sm text-gray-600">
+                      <p className="mt-2 text-sm text-gray-600 dark:text-zinc-400">
                         {file?.name || t('assignments.noFileChosen')}
                       </p>
                     </div>
@@ -353,14 +353,14 @@ export default function TeacherAssignments() {
               )}
             </div>
 
-            <div className="px-5 py-4 border-t border-gray-200 flex justify-end gap-2">
+            <div className="px-5 py-4 border-t border-gray-200 dark:border-zinc-700 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => {
                   setOpenCreate(false);
                   setEditTarget(null);
                 }}
-                className="px-4 py-2 rounded-lg border border-gray-300"
+                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
               >
                 {t('cancel')}
               </button>
@@ -368,7 +368,7 @@ export default function TeacherAssignments() {
                 type="button"
                 disabled={busy || !deadline || (!editTarget && (!title.trim() || !description.trim() || tools.length === 0))}
                 onClick={() => void (editTarget ? onUpdateDeadline() : onCreate())}
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-60"
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-60 hover:bg-blue-700 transition-colors"
               >
                 {busy ? t('loading') : t('save')}
               </button>

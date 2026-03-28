@@ -1,4 +1,5 @@
-@custom-variant dark (&:is(.dark *));
+/* Class-based dark mode (Tailwind v4): toggle `dark` on document.documentElement */
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --font-size: 16px;

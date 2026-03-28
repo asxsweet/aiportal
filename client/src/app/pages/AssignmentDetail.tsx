@@ -81,7 +81,7 @@ export default function AssignmentDetail() {
   if (loading) {
     return (
       <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
-        <div className="p-8 flex items-center justify-center text-gray-500">{t('loading')}</div>
+        <div className="p-8 flex items-center justify-center text-gray-500 dark:text-zinc-400">{t('loading')}</div>
       </SidebarLayout>
     );
   }
@@ -89,7 +89,7 @@ export default function AssignmentDetail() {
   if (!assignment) {
     return (
       <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
-        <div className="p-8 text-red-600">{error ?? t('assignmentDetail.loadError')}</div>
+        <div className="p-8 text-red-600 dark:text-red-400">{error ?? t('assignmentDetail.loadError')}</div>
       </SidebarLayout>
     );
   }
@@ -102,13 +102,13 @@ export default function AssignmentDetail() {
       <div className="p-8">
         <div className="max-w-4xl mx-auto">
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>
+            <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-sm border border-red-100 dark:border-red-900/50">{error}</div>
           )}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 transition-colors mb-6">
             <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
               <div className="flex-1">
-                <h1 className="text-3xl font-bold mb-3">{assignment.title}</h1>
-                <div className="flex items-center gap-4 text-sm text-gray-600 flex-wrap">
+                <h1 className="text-3xl font-bold mb-3 text-gray-900 dark:text-zinc-50">{assignment.title}</h1>
+                <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-zinc-400 flex-wrap">
                   <span className="flex items-center gap-1">
                     <User className="w-4 h-4" />
                     {assignment.instructorName ?? t('assignmentDetail.instructor')}
@@ -124,10 +124,10 @@ export default function AssignmentDetail() {
               </div>
             </div>
 
-            <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-lg flex-wrap">
+            <div className="flex items-center gap-6 p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg flex-wrap border border-gray-100/80 dark:border-zinc-700/50">
               <div>
-                <p className="text-sm text-gray-600 mb-1">{t('assignmentDetail.dueDate')}</p>
-                <p className="font-semibold text-lg">
+                <p className="text-sm text-gray-600 dark:text-zinc-400 mb-1">{t('assignmentDetail.dueDate')}</p>
+                <p className="font-semibold text-lg text-gray-900 dark:text-zinc-100">
                   {new Date(assignment.dueDate).toLocaleString(undefined, {
                     year: 'numeric',
                     month: '2-digit',
@@ -137,9 +137,9 @@ export default function AssignmentDetail() {
                   })}
                 </p>
               </div>
-              <div className="h-12 w-px bg-gray-300 hidden sm:block" />
+              <div className="h-12 w-px bg-gray-300 dark:bg-zinc-600 hidden sm:block" />
               <div>
-                <p className="text-sm text-gray-600 mb-2">{t('assignmentDetail.requiredTools')}</p>
+                <p className="text-sm text-gray-600 dark:text-zinc-400 mb-2">{t('assignmentDetail.requiredTools')}</p>
                 <div className="flex gap-2 flex-wrap">
                   {assignment.tools.map((tool) => (
                     <ToolBadge key={tool} tool={tool} size="md" />
@@ -149,31 +149,31 @@ export default function AssignmentDetail() {
             </div>
           </div>
           {role === 'student' && isExpired && (
-            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 text-sm font-medium">
+            <div className="mb-6 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/40 px-4 py-3 text-red-700 dark:text-red-300 text-sm font-medium">
               {t('assignmentDetail.deadlineExpired')}
             </div>
           )}
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
-            <h2 className="text-xl font-semibold mb-4">{t('assignmentDetail.description')}</h2>
+          <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 transition-colors mb-6">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">{t('assignmentDetail.description')}</h2>
             <div className="prose prose-sm max-w-none">
-              <p className="whitespace-pre-line text-gray-700 leading-relaxed">
+              <p className="whitespace-pre-line text-gray-700 dark:text-zinc-300 leading-relaxed">
                 {assignment.description}
               </p>
             </div>
           </div>
 
           {(assignment.originalFileName || assignment.attachmentOriginalName || assignment.storedName) && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
+            <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 transition-colors mb-6">
               <h2 className="text-xl font-semibold mb-4">{t('assignmentDetail.attachments')}</h2>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors border border-transparent dark:border-zinc-700/50">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <FileDown className="w-5 h-5 text-blue-600" />
+                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950/50 rounded-lg flex items-center justify-center">
+                      <FileDown className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <p className="font-medium">{attachmentName}</p>
+                      <p className="font-medium text-gray-900 dark:text-zinc-100">{attachmentName}</p>
                     </div>
                   </div>
                   <button
@@ -184,7 +184,7 @@ export default function AssignmentDetail() {
                         attachmentName,
                       )
                     }
-                    className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm"
+                    className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg transition-colors font-medium text-sm"
                   >
                     {t('download')}
                   </button>
@@ -194,44 +194,44 @@ export default function AssignmentDetail() {
           )}
 
           {role === 'teacher' && (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
-              <h2 className="text-xl font-semibold mb-4">{t('assignmentDetail.submissions')}</h2>
+            <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 transition-colors mb-6">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">{t('assignmentDetail.submissions')}</h2>
               {submissions.length === 0 ? (
-                <p className="text-gray-500">{t('assignmentDetail.noSubmissions')}</p>
+                <p className="text-gray-500 dark:text-zinc-400">{t('assignmentDetail.noSubmissions')}</p>
               ) : (
                 <>
-                  <ul className="divide-y divide-gray-100">
+                  <ul className="divide-y divide-gray-100 dark:divide-zinc-800">
                     {submissions.map((s) => (
                       <li
                         key={s.id}
                         className="py-4 flex items-center justify-between flex-wrap gap-3"
                       >
                         <div>
-                          <p className="font-medium">{s.title}</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="font-medium text-gray-900 dark:text-zinc-100">{s.title}</p>
+                          <p className="text-sm text-gray-600 dark:text-zinc-400">
                             {t('assignmentDetail.student')}: {s.studentName}
                           </p>
                           <div className="mt-1 flex flex-wrap gap-2 text-xs">
-                            <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                            <span className="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300">
                               {t('status.submitted')}
                             </span>
-                            <span className="px-2 py-0.5 rounded-full bg-violet-100 text-violet-700">
+                            <span className="px-2 py-0.5 rounded-full bg-violet-100 dark:bg-violet-950/50 text-violet-700 dark:text-violet-300">
                               AI: {s.rating?.aiOverall ?? '—'}
                             </span>
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300">
                               Teacher: {s.rating?.teacherScore ?? '—'}
                             </span>
-                            <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+                            <span className="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300">
                               {t('comments.title')}: {s.commentsCount ?? 0}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-gray-400 dark:text-zinc-500">
                             {new Date(s.submittedAt).toLocaleString()}
                           </p>
                         </div>
                         <Link
                           to={`/project/${s.id}`}
-                          className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg font-medium text-sm"
+                          className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg font-medium text-sm transition-colors"
                         >
                           {t('assignmentDetail.gradeProject')}
                         </Link>
@@ -244,18 +244,18 @@ export default function AssignmentDetail() {
                         type="button"
                         disabled={page <= 1}
                         onClick={() => setPage((p) => Math.max(1, p - 1))}
-                        className="px-3 py-1 border rounded-lg text-sm disabled:opacity-50"
+                        className="px-3 py-1 border border-gray-300 dark:border-zinc-600 rounded-lg text-sm text-gray-800 dark:text-zinc-200 disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-zinc-800"
                       >
                         {t('back')}
                       </button>
-                      <span className="text-sm text-gray-600 self-center">
+                      <span className="text-sm text-gray-600 dark:text-zinc-400 self-center">
                         {t('pagination', { page, total: totalPages })}
                       </span>
                       <button
                         type="button"
                         disabled={page >= totalPages}
                         onClick={() => setPage((p) => p + 1)}
-                        className="px-3 py-1 border rounded-lg text-sm disabled:opacity-50"
+                        className="px-3 py-1 border border-gray-300 dark:border-zinc-600 rounded-lg text-sm text-gray-800 dark:text-zinc-200 disabled:opacity-50 hover:bg-gray-50 dark:hover:bg-zinc-800"
                       >
                         →
                       </button>
@@ -283,7 +283,7 @@ export default function AssignmentDetail() {
             )}
             <Link
               to={role === 'teacher' ? '/teacher/dashboard' : '/student/dashboard'}
-              className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-all font-semibold"
+              className="px-8 py-4 border-2 border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-zinc-200 rounded-lg hover:border-gray-400 dark:hover:border-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-all font-semibold"
             >
               {t('assignmentDetail.backDashboard')}
             </Link>

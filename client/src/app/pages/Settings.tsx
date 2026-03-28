@@ -18,6 +18,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { api, getErrorMessage, setToken } from '@/lib/api';
 import { useAuth, type User as U } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import AvatarImage from '@/components/AvatarImage';
 
 type TabId = 'account' | 'profile' | 'language' | 'notifications' | 'security' | 'appearance';
@@ -47,7 +48,7 @@ export default function Settings() {
   const [newPassword, setNewPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [banner, setBanner] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
-  const [dark, setDark] = useState(() => typeof document !== 'undefined' && document.documentElement.classList.contains('dark'));
+  const { theme, setTheme } = useTheme();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
 
@@ -70,18 +71,6 @@ export default function Settings() {
     setBanner({ type, text });
     setTimeout(() => setBanner(null), 4000);
   }, []);
-
-  const applyDark = useCallback((next: boolean) => {
-    setDark(next);
-    document.documentElement.classList.toggle('dark', next);
-    localStorage.setItem('rep_theme', next ? 'dark' : 'light');
-  }, []);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('rep_theme');
-    if (stored === 'dark') applyDark(true);
-    else if (stored === 'light') applyDark(false);
-  }, [applyDark]);
 
   const saveAccount = async () => {
     if (!user) return;
@@ -471,24 +460,24 @@ export default function Settings() {
                   <p className="text-sm text-gray-500 dark:text-zinc-500">{t('settings.appearanceDesc')}</p>
                 </div>
                 <Toggle
-                  checked={dark}
-                  onChange={applyDark}
-                  label={dark ? t('settings.darkMode') : t('settings.lightMode')}
+                  checked={theme === 'dark'}
+                  onChange={(v) => setTheme(v ? 'dark' : 'light')}
+                  label={theme === 'dark' ? t('settings.darkMode') : t('settings.lightMode')}
                   desc={t('settings.appearanceDesc')}
                 />
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    onClick={() => applyDark(false)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-sm"
+                    onClick={() => setTheme('light')}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-zinc-800"
                   >
                     <Sun className="w-4 h-4" />
                     {t('settings.lightMode')}
                   </button>
                   <button
                     type="button"
-                    onClick={() => applyDark(true)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-sm"
+                    onClick={() => setTheme('dark')}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-zinc-700 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-zinc-800"
                   >
                     <Moon className="w-4 h-4" />
                     {t('settings.darkMode')}

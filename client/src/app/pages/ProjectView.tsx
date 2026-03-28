@@ -97,7 +97,7 @@ export default function ProjectView() {
   if (loading) {
     return (
       <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
-        <div className="p-8 flex items-center justify-center text-gray-500">{t('loading')}</div>
+        <div className="p-8 flex items-center justify-center text-gray-500 dark:text-zinc-400">{t('loading')}</div>
       </SidebarLayout>
     );
   }
@@ -105,7 +105,7 @@ export default function ProjectView() {
   if (!project || !project.rating) {
     return (
       <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
-        <div className="p-8 text-red-600">{error ?? t('projectView.loadError')}</div>
+        <div className="p-8 text-red-600 dark:text-red-400">{error ?? t('projectView.loadError')}</div>
       </SidebarLayout>
     );
   }
@@ -132,20 +132,20 @@ export default function ProjectView() {
       <div className="p-8">
         <div className="max-w-5xl mx-auto">
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>
+            <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-sm border border-red-100 dark:border-red-900/50">{error}</div>
           )}
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 mb-6 transition-colors">
             <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
               <div className="flex-1">
-                <h1 className="text-3xl font-bold mb-3">{project.title}</h1>
-                <div className="flex items-center gap-4 text-sm text-gray-600 flex-wrap">
+                <h1 className="text-3xl font-bold mb-3 text-gray-900 dark:text-zinc-50">{project.title}</h1>
+                <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-zinc-400 flex-wrap">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
                     {t('projectView.submitted')}: {new Date(project.submittedAt).toLocaleDateString()}
                   </span>
                   {project.studentName && role === 'teacher' && (
-                    <span className="text-gray-500">{project.studentName}</span>
+                    <span className="text-gray-500 dark:text-zinc-500">{project.studentName}</span>
                   )}
                   <span className="flex items-center gap-1">
                     <Users className="w-4 h-4" />
@@ -159,15 +159,15 @@ export default function ProjectView() {
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mb-2">
                   <span className="text-3xl font-bold text-white">{displayFinal}</span>
                 </div>
-                <p className="text-sm font-medium text-gray-600">{t('projectView.finalScore')}</p>
+                <p className="text-sm font-medium text-gray-600 dark:text-zinc-400">{t('projectView.finalScore')}</p>
                 {r.teacherScore == null && (
-                  <p className="text-xs text-amber-600 mt-1">{t('projectView.pendingTeacher')}</p>
+                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{t('projectView.pendingTeacher')}</p>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg flex-wrap">
-              <p className="text-sm text-gray-600 font-medium">{t('projectView.toolsUsed')}:</p>
+            <div className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg flex-wrap border border-gray-100/80 dark:border-zinc-700/50">
+              <p className="text-sm text-gray-600 dark:text-zinc-400 font-medium">{t('projectView.toolsUsed')}:</p>
               <div className="flex gap-2 flex-wrap">
                 {project.tools.map((tool) => (
                   <ToolBadge key={tool} tool={tool} size="md" />
@@ -176,49 +176,49 @@ export default function ProjectView() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
-            <h2 className="text-xl font-semibold mb-4">{t('projectView.description')}</h2>
-            <p className="whitespace-pre-line text-gray-700 leading-relaxed">{project.description}</p>
+          <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 mb-6 transition-colors">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">{t('projectView.description')}</h2>
+            <p className="whitespace-pre-line text-gray-700 dark:text-zinc-300 leading-relaxed">{project.description}</p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
-            <h2 className="text-xl font-semibold mb-4">{t('projectView.files')}</h2>
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 mb-6 transition-colors">
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">{t('projectView.files')}</h2>
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-800/50 rounded-lg border border-transparent dark:border-zinc-700/50">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <FileDown className="w-5 h-5 text-blue-600" />
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-950/50 rounded-lg flex items-center justify-center">
+                  <FileDown className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 </div>
-                <p className="font-medium">{displayFileName}</p>
+                <p className="font-medium text-gray-900 dark:text-zinc-100">{displayFileName}</p>
               </div>
               <button
                 type="button"
                 onClick={() =>
                   void downloadBlob(`/api/projects/${project.id}/file`, displayFileName)
                 }
-                className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm"
+                className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-lg transition-colors font-medium text-sm"
               >
                 {t('download')}
               </button>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-sm border border-blue-100 p-8 mb-6">
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-zinc-900 dark:to-zinc-900 rounded-xl shadow-sm border border-blue-100 dark:border-zinc-800 p-8 mb-6 transition-colors">
             <div className="flex items-center gap-3 mb-6">
-              <Bot className="w-8 h-8 text-blue-600" />
+              <Bot className="w-8 h-8 text-blue-600 dark:text-blue-400" />
               <div>
-                <h2 className="text-xl font-semibold">{t('projectView.aiTitle')}</h2>
-                <p className="text-sm text-gray-600">{t('projectView.aiSubtitle')}</p>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-zinc-50">{t('projectView.aiTitle')}</h2>
+                <p className="text-sm text-gray-600 dark:text-zinc-400">{t('projectView.aiSubtitle')}</p>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4 mb-6">
               {criteria.map((c) => (
-                <div key={c.key} className="bg-white rounded-lg p-4">
+                <div key={c.key} className="bg-white dark:bg-zinc-950 rounded-lg p-4 border border-gray-100 dark:border-zinc-800">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-sm">{t(`projectView.criteria.${c.key}`)}</h3>
-                    <span className="text-lg font-bold text-blue-600">{c.score}/100</span>
+                    <h3 className="font-semibold text-sm text-gray-900 dark:text-zinc-100">{t(`projectView.criteria.${c.key}`)}</h3>
+                    <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{c.score}/100</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                  <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2 mb-2">
                     <div
                       className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full"
                       style={{ width: `${c.score}%` }}
@@ -228,11 +228,11 @@ export default function ProjectView() {
               ))}
             </div>
 
-            <div className="bg-white rounded-lg p-4">
-              <h3 className="font-semibold mb-2">{t('projectView.overallAi')}</h3>
-              <p className="text-sm text-gray-700">{r.aiFeedback}</p>
+            <div className="bg-white dark:bg-zinc-950 rounded-lg p-4 border border-gray-100 dark:border-zinc-800">
+              <h3 className="font-semibold mb-2 text-gray-900 dark:text-zinc-50">{t('projectView.overallAi')}</h3>
+              <p className="text-sm text-gray-700 dark:text-zinc-300">{r.aiFeedback}</p>
               {r.aiOverall != null && (
-                <p className="text-sm font-semibold text-blue-700 mt-2">
+                <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 mt-2">
                   AI: {r.aiOverall}/100
                 </p>
               )}
@@ -247,13 +247,13 @@ export default function ProjectView() {
             />
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-sm border border-green-100 p-8 mb-6">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-zinc-900 dark:to-zinc-900 rounded-xl shadow-sm border border-green-100 dark:border-zinc-800 p-8 mb-6 transition-colors">
             <div className="flex items-center gap-3 mb-6 flex-wrap">
               <User className="w-8 h-8 text-green-600" />
               <div>
-                <h2 className="text-xl font-semibold">{t('projectView.teacherTitle')}</h2>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-zinc-50">{t('projectView.teacherTitle')}</h2>
                 {r.gradedAt && (
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-zinc-400">
                     {t('projectView.gradedOn')} {new Date(r.gradedAt).toLocaleDateString()}
                   </p>
                 )}
@@ -266,9 +266,9 @@ export default function ProjectView() {
               )}
             </div>
 
-            <div className="bg-white rounded-lg p-4">
-              <h3 className="font-semibold mb-2">{t('projectView.teacherFeedback')}</h3>
-              <p className="text-sm text-gray-700">
+            <div className="bg-white dark:bg-zinc-950 rounded-lg p-4 border border-gray-100 dark:border-zinc-800">
+              <h3 className="font-semibold mb-2 text-gray-900 dark:text-zinc-50">{t('projectView.teacherFeedback')}</h3>
+              <p className="text-sm text-gray-700 dark:text-zinc-300">
                 {r.teacherFeedback ?? t('projectView.pendingTeacher')}
               </p>
             </div>
@@ -277,12 +277,12 @@ export default function ProjectView() {
           {role === 'teacher' && (
             <form
               onSubmit={handleGrade}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6 space-y-4"
+              className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8 mb-6 transition-colors space-y-4"
             >
-              <h2 className="text-xl font-semibold">{t('projectView.teacherGradeForm')}</h2>
-              {gradeMsg && <p className="text-sm text-green-700">{gradeMsg}</p>}
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-zinc-50">{t('projectView.teacherGradeForm')}</h2>
+              {gradeMsg && <p className="text-sm text-green-700 dark:text-green-400">{gradeMsg}</p>}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                   {t('projectView.teacherScore')}
                 </label>
                 <input
@@ -291,19 +291,19 @@ export default function ProjectView() {
                   max={100}
                   value={teacherScore}
                   onChange={(e) => setTeacherScore(Number(e.target.value))}
-                  className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full max-w-xs px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                   {t('projectView.teacherNotes')}
                 </label>
                 <textarea
                   value={teacherFeedback}
                   onChange={(e) => setTeacherFeedback(e.target.value)}
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100"
                   required
                 />
               </div>
@@ -323,7 +323,7 @@ export default function ProjectView() {
 
           <Link
             to={role === 'teacher' ? '/teacher/dashboard' : '/student/dashboard'}
-            className="inline-block px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-all font-semibold"
+            className="inline-block px-8 py-4 border-2 border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-zinc-200 rounded-lg hover:border-gray-400 dark:hover:border-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-all font-semibold"
           >
             {t('assignmentDetail.backDashboard')}
           </Link>

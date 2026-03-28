@@ -2,12 +2,13 @@ import { Link } from 'react-router';
 import { Bot, Cpu, Users, TrendingUp, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import ThemeToggle from '@/app/components/ThemeToggle';
 
 export default function Landing() {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-white dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 transition-colors">
       <nav className="container mx-auto px-6 py-6 flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-2">
           <Bot className="w-8 h-8 text-blue-600" />
@@ -15,11 +16,12 @@ export default function Landing() {
             {t('brand')}
           </h1>
         </div>
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
+          <ThemeToggle />
           <LanguageSwitcher />
           <Link
             to="/login"
-            className="px-6 py-2 text-gray-700 hover:text-blue-600 transition-colors font-medium"
+            className="px-6 py-2 text-gray-700 dark:text-zinc-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
           >
             {t('landing.ctaLogin')}
           </Link>
@@ -40,7 +42,7 @@ export default function Landing() {
                 {t('landing.heroTitle')}
               </span>
             </h2>
-            <p className="text-xl text-gray-600 mb-8">{t('landing.heroLead')}</p>
+            <p className="text-xl text-gray-600 dark:text-zinc-400 mb-8">{t('landing.heroLead')}</p>
             <div className="flex gap-4 flex-wrap">
               <Link
                 to="/register"
@@ -50,7 +52,7 @@ export default function Landing() {
               </Link>
               <Link
                 to="/login"
-                className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-blue-600 hover:text-blue-600 transition-all font-semibold"
+                className="px-8 py-4 border-2 border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-zinc-200 rounded-lg hover:border-blue-600 hover:text-blue-600 dark:hover:border-blue-500 dark:hover:text-blue-400 transition-all font-semibold"
               >
                 {t('landing.learnMore')}
               </Link>
@@ -67,55 +69,55 @@ export default function Landing() {
       </div>
 
       <div className="container mx-auto px-6 py-16">
-        <h3 className="text-3xl font-bold text-center mb-12">{t('landing.featuresTitle')}</h3>
+        <h3 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-zinc-50">{t('landing.featuresTitle')}</h3>
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white dark:bg-zinc-900 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-zinc-800 hover:shadow-xl transition-shadow">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
               <Cpu className="w-6 h-6 text-white" />
             </div>
-            <h4 className="text-xl font-semibold mb-3">{t('landing.f1Title')}</h4>
-            <p className="text-gray-600">{t('landing.f1Desc')}</p>
+            <h4 className="text-xl font-semibold mb-3 text-gray-900 dark:text-zinc-50">{t('landing.f1Title')}</h4>
+            <p className="text-gray-600 dark:text-zinc-400">{t('landing.f1Desc')}</p>
           </div>
 
-          <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white dark:bg-zinc-900 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-zinc-800 hover:shadow-xl transition-shadow">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
               <Bot className="w-6 h-6 text-white" />
             </div>
-            <h4 className="text-xl font-semibold mb-3">{t('landing.f2Title')}</h4>
-            <p className="text-gray-600">{t('landing.f2Desc')}</p>
+            <h4 className="text-xl font-semibold mb-3 text-gray-900 dark:text-zinc-50">{t('landing.f2Title')}</h4>
+            <p className="text-gray-600 dark:text-zinc-400">{t('landing.f2Desc')}</p>
           </div>
 
-          <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+          <div className="bg-white dark:bg-zinc-900 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-zinc-800 hover:shadow-xl transition-shadow">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
               <Users className="w-6 h-6 text-white" />
             </div>
-            <h4 className="text-xl font-semibold mb-3">{t('landing.f3Title')}</h4>
-            <p className="text-gray-600">{t('landing.f3Desc')}</p>
+            <h4 className="text-xl font-semibold mb-3 text-gray-900 dark:text-zinc-50">{t('landing.f3Title')}</h4>
+            <p className="text-gray-600 dark:text-zinc-400">{t('landing.f3Desc')}</p>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-6 py-16">
-        <div className="bg-white rounded-2xl shadow-xl p-12">
-          <h3 className="text-3xl font-bold text-center mb-8">{t('landing.platformsTitle')}</h3>
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl border border-gray-100 dark:border-zinc-800 p-12">
+          <h3 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-zinc-50">{t('landing.platformsTitle')}</h3>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="flex items-center gap-6 p-6 border-2 border-gray-200 rounded-xl hover:border-blue-500 transition-all">
+            <div className="flex items-center gap-6 p-6 border-2 border-gray-200 dark:border-zinc-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-600 transition-all">
               <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
                 <Bot className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h4 className="text-xl font-semibold mb-2">{t('toolsPage.ev3Title')}</h4>
-                <p className="text-gray-600">{t('landing.ev3Card')}</p>
+                <h4 className="text-xl font-semibold mb-2 text-gray-900 dark:text-zinc-50">{t('toolsPage.ev3Title')}</h4>
+                <p className="text-gray-600 dark:text-zinc-400">{t('landing.ev3Card')}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-6 p-6 border-2 border-gray-200 rounded-xl hover:border-blue-500 transition-all">
+            <div className="flex items-center gap-6 p-6 border-2 border-gray-200 dark:border-zinc-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-600 transition-all">
               <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl flex items-center justify-center">
                 <Cpu className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h4 className="text-xl font-semibold mb-2">{t('toolsPage.tinkercadTitle')}</h4>
-                <p className="text-gray-600">{t('landing.tinkercadCard')}</p>
+                <h4 className="text-xl font-semibold mb-2 text-gray-900 dark:text-zinc-50">{t('toolsPage.tinkercadTitle')}</h4>
+                <p className="text-gray-600 dark:text-zinc-400">{t('landing.tinkercadCard')}</p>
               </div>
             </div>
           </div>
@@ -129,14 +131,14 @@ export default function Landing() {
           <p className="text-xl mb-8 opacity-90">{t('landing.bannerLead')}</p>
           <Link
             to="/register"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 rounded-lg hover:shadow-xl transition-all font-semibold"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-zinc-100 text-blue-600 dark:text-blue-800 rounded-lg hover:shadow-xl transition-all font-semibold"
           >
             {t('landing.bannerCta')} <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </div>
 
-      <footer className="container mx-auto px-6 py-8 text-center text-gray-600 border-t border-gray-200">
+      <footer className="container mx-auto px-6 py-8 text-center text-gray-600 dark:text-zinc-400 border-t border-gray-200 dark:border-zinc-800">
         <p>{t('landing.footer')}</p>
       </footer>
     </div>

@@ -97,19 +97,19 @@ export default function StudentDashboard() {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
             <div>
               <h1 className="text-3xl font-bold mb-2">{t('studentDash.title')}</h1>
-              <p className="text-gray-600">{t('studentDash.subtitle')}</p>
+              <p className="text-gray-600 dark:text-zinc-400">{t('studentDash.subtitle')}</p>
             </div>
             <div className="flex flex-wrap gap-2 shrink-0">
               <Link
                 to="/profile"
-                className="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 flex items-center gap-2"
+                className="px-4 py-2.5 rounded-lg border border-gray-200 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-200 text-sm font-medium hover:bg-gray-50 dark:hover:bg-zinc-800 flex items-center gap-2"
               >
                 <UserCircle className="w-4 h-4" />
                 {t('nav.profile')}
               </Link>
               <Link
                 to="/settings"
-                className="px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 flex items-center gap-2"
+                className="px-4 py-2.5 rounded-lg border border-gray-200 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-200 text-sm font-medium hover:bg-gray-50 dark:hover:bg-zinc-800 flex items-center gap-2"
               >
                 <Settings className="w-4 h-4" />
                 {t('nav.settings')}
@@ -124,7 +124,7 @@ export default function StudentDashboard() {
           )}
 
           {loading ? (
-            <div className="py-20 text-center text-gray-500">{t('loading')}</div>
+            <div className="py-20 text-center text-gray-500 dark:text-zinc-400">{t('loading')}</div>
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -133,7 +133,7 @@ export default function StudentDashboard() {
                   return (
                     <div
                       key={stat.label}
-                      className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow"
+                      className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div
@@ -143,20 +143,20 @@ export default function StudentDashboard() {
                         </div>
                       </div>
                       <p className="text-3xl font-bold mb-1">{stat.value}</p>
-                      <p className="text-sm text-gray-600">{stat.label}</p>
+                      <p className="text-sm text-gray-600 dark:text-zinc-400">{stat.label}</p>
                     </div>
                   );
                 })}
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 overflow-hidden">
                 <div className="p-6 border-b border-gray-100">
                   <h2 className="text-xl font-semibold">{t('studentDash.myAssignments')}</h2>
                 </div>
                 {rows.length === 0 ? (
-                  <div className="p-12 text-center text-gray-500">{t('empty')}</div>
+                  <div className="p-12 text-center text-gray-500 dark:text-zinc-400">{t('empty')}</div>
                 ) : (
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-gray-100 dark:divide-zinc-800">
                     {rows.map((row) => {
                       const { assignment, status, finalScore, projectId } = row;
                       const progress =
@@ -164,7 +164,7 @@ export default function StudentDashboard() {
                       return (
                         <div
                           key={assignment.id}
-                          className="p-6 hover:bg-gray-50 transition-colors"
+                          className="p-6 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
                         >
                           <div className="flex items-start justify-between mb-3 flex-wrap gap-4">
                             <div className="flex-1 min-w-[200px]">
@@ -172,11 +172,11 @@ export default function StudentDashboard() {
                                 <h3 className="text-lg font-semibold">{assignment.title}</h3>
                                 <StatusBadge status={status} />
                               </div>
-                              <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                              <p className="text-sm text-gray-600 dark:text-zinc-400 mb-3 line-clamp-3">
                                 {assignment.description}
                               </p>
                               <div className="flex items-center gap-4 text-sm flex-wrap">
-                                <span className="flex items-center gap-1 text-gray-600">
+                                <span className="flex items-center gap-1 text-gray-600 dark:text-zinc-400">
                                   <Clock className="w-4 h-4" />
                                   {t('studentDash.due')}:{' '}
                                   {new Date(assignment.dueDate).toLocaleDateString()}
@@ -194,7 +194,7 @@ export default function StudentDashboard() {
                                   <span className="text-3xl font-bold text-green-600">
                                     {Math.round(finalScore)}
                                   </span>
-                                  <span className="text-gray-500">/100</span>
+                                  <span className="text-gray-500 dark:text-zinc-500">/100</span>
                                 </div>
                               )}
                               <Link
@@ -215,10 +215,10 @@ export default function StudentDashboard() {
                           {progress > 0 && status !== 'graded' && (
                             <div className="mt-4">
                               <div className="flex items-center justify-between text-sm mb-2">
-                                <span className="text-gray-600">{t('teacherDash.progress')}</span>
+                                <span className="text-gray-600 dark:text-zinc-400">{t('teacherDash.progress')}</span>
                                 <span className="font-semibold">{progress}%</span>
                               </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
                                 <div
                                   className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all"
                                   style={{ width: `${progress}%` }}
@@ -236,7 +236,7 @@ export default function StudentDashboard() {
               <div className="grid md:grid-cols-2 gap-6 mt-8">
                 <Link
                   to="/tools"
-                  className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all group"
+                  className="bg-white dark:bg-zinc-900 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 hover:shadow-md transition-all group"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
@@ -244,7 +244,7 @@ export default function StudentDashboard() {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">{t('nav.tools')}</h3>
-                      <p className="text-sm text-gray-600">{t('teacherDash.roboticsToolsDesc')}</p>
+                      <p className="text-sm text-gray-600 dark:text-zinc-400">{t('teacherDash.roboticsToolsDesc')}</p>
                     </div>
                   </div>
                 </Link>
@@ -254,7 +254,7 @@ export default function StudentDashboard() {
                   <p className="text-sm opacity-90 mb-4">{t('studentDash.needHelpDesc')}</p>
                   <Link
                     to="/tools"
-                    className="inline-block px-4 py-2 bg-white text-blue-600 rounded-lg hover:shadow-lg transition-all font-medium text-sm"
+                    className="inline-block px-4 py-2 bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-zinc-700 rounded-lg hover:shadow-lg transition-all font-medium text-sm"
                   >
                     {t('studentDash.viewResources')}
                   </Link>

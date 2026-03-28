@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import ThemeToggle from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface SidebarProps {
@@ -52,8 +53,17 @@ export default function Sidebar({ role }: SidebarProps) {
         </p>
       </div>
 
-      <div className="hidden md:block">
-        <LanguageSwitcher className="mb-6" />
+      <div className="md:hidden flex justify-center mb-4">
+        <ThemeToggle />
+      </div>
+
+      <div className="hidden md:flex md:flex-col gap-3 mb-6">
+        <div className="flex items-center gap-2">
+          <ThemeToggle className="shrink-0" />
+          <div className="flex-1 min-w-0">
+            <LanguageSwitcher className="w-full" />
+          </div>
+        </div>
       </div>
 
       <nav className="space-y-2 flex-1">

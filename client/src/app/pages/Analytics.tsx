@@ -111,7 +111,7 @@ export default function Analytics() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">{t('analytics.title')}</h1>
-            <p className="text-gray-600">{t('analytics.subtitle')}</p>
+            <p className="text-gray-600 dark:text-zinc-400">{t('analytics.subtitle')}</p>
           </div>
 
           {error && (
@@ -121,9 +121,9 @@ export default function Analytics() {
           )}
 
           {loading ? (
-            <div className="py-20 text-center text-gray-500">{t('loading')}</div>
+            <div className="py-20 text-center text-gray-500 dark:text-zinc-400">{t('loading')}</div>
           ) : !data ? (
-            <div className="py-20 text-center text-gray-500">{t('empty')}</div>
+            <div className="py-20 text-center text-gray-500 dark:text-zinc-400">{t('empty')}</div>
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -132,7 +132,7 @@ export default function Analytics() {
                   return (
                     <div
                       key={stat.label}
-                      className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow"
+                      className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm p-6 border border-gray-100 dark:border-zinc-800 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div
@@ -145,7 +145,7 @@ export default function Analytics() {
                         ) : null}
                       </div>
                       <p className="text-3xl font-bold mb-1">{stat.value}</p>
-                      <p className="text-sm text-gray-600">{stat.label}</p>
+                      <p className="text-sm text-gray-600 dark:text-zinc-400">{stat.label}</p>
                     </div>
                   );
                 })}
@@ -158,7 +158,7 @@ export default function Analytics() {
               )}
 
               <div className="grid md:grid-cols-2 gap-6 mb-6">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6">
                   <h2 className="text-xl font-semibold mb-4">{t('analytics.performanceTrend')}</h2>
                   <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={data.performanceTrend.length ? data.performanceTrend : [{ name: '—', avgScore: 0 }]}>
@@ -178,7 +178,7 @@ export default function Analytics() {
                   </ResponsiveContainer>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6">
                   <h2 className="text-xl font-semibold mb-4">{t('analytics.assignmentStatus')}</h2>
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart
@@ -201,7 +201,7 @@ export default function Analytics() {
               </div>
 
               <div className="grid md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6">
                   <h2 className="text-xl font-semibold mb-4">{t('analytics.gradeDistribution')}</h2>
                   <ResponsiveContainer width="100%" height={250}>
                     <PieChart>
@@ -227,7 +227,7 @@ export default function Analytics() {
                   </ResponsiveContainer>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6">
                   <h2 className="text-xl font-semibold mb-4">{t('analytics.toolUsage')}</h2>
                   <ResponsiveContainer width="100%" height={250}>
                     <PieChart>
@@ -255,13 +255,13 @@ export default function Analytics() {
                     {data.toolUsage.map((tool) => (
                       <div key={tool.name} className="flex items-center gap-2 text-sm">
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: tool.color }} />
-                        <span className="text-gray-700">{tool.name}</span>
+                        <span className="text-gray-700 dark:text-zinc-200">{tool.name}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6">
                   <h2 className="text-xl font-semibold mb-4">{t('analytics.weeklySubmissions')}</h2>
                   <ResponsiveContainer width="100%" height={250}>
                     <BarChart
@@ -281,48 +281,48 @@ export default function Analytics() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 overflow-hidden">
                 <div className="p-6 border-b border-gray-100">
                   <h2 className="text-xl font-semibold">{t('analytics.topStudents')}</h2>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-50 dark:bg-zinc-800/80">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
                           {t('analytics.rank')}
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
                           {t('analytics.studentName')}
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
                           {t('analytics.avgScore')}
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
                           {t('analytics.completedAssignments')}
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
                           {t('analytics.performance')}
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white dark:bg-zinc-900 divide-y divide-gray-200 dark:divide-zinc-800">
                       {data.topStudents.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                          <td colSpan={5} className="px-6 py-8 text-center text-gray-500 dark:text-zinc-400">
                             {t('empty')}
                           </td>
                         </tr>
                       ) : (
                         data.topStudents.map((student) => (
-                          <tr key={student.rank} className="hover:bg-gray-50 transition-colors">
+                          <tr key={student.rank} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div
                                 className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
                                   student.rank === 1
                                     ? 'bg-yellow-100 text-yellow-700'
                                     : student.rank === 2
-                                      ? 'bg-gray-100 text-gray-700'
+                                      ? 'bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-200'
                                       : student.rank === 3
                                         ? 'bg-orange-100 text-orange-700'
                                         : 'bg-blue-100 text-blue-700'
@@ -332,17 +332,17 @@ export default function Analytics() {
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="font-medium text-gray-900">{student.name}</div>
+                              <div className="font-medium text-gray-900 dark:text-zinc-100">{student.name}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className="text-lg font-bold text-green-600">{student.avgScore}%</span>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-500 dark:text-zinc-400">
                               {student.assignments}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="w-32">
-                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
                                   <div
                                     className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full"
                                     style={{ width: `${Math.min(100, student.avgScore)}%` }}

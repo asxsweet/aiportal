@@ -43,28 +43,28 @@ export default function RoboticsTools() {
       <div className="p-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{t('toolsPage.title')}</h1>
-            <p className="text-gray-600">{t('toolsPage.subtitle')}</p>
+            <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-zinc-50">{t('toolsPage.title')}</h1>
+            <p className="text-gray-600 dark:text-zinc-400">{t('toolsPage.subtitle')}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {tools.map((tool) => (
               <div
                 key={tool.id}
-                className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-white dark:bg-zinc-900 rounded-xl shadow-lg border border-gray-100 dark:border-zinc-800 overflow-hidden hover:shadow-xl transition-shadow"
               >
                 <div className={`h-32 bg-gradient-to-r ${tool.color} flex items-center justify-center`}>
                   <span className="text-6xl">{tool.icon}</span>
                 </div>
                 <div className="p-6">
                   <h2 className="text-2xl font-bold mb-2">{t(tool.nameKey)}</h2>
-                  <p className="text-gray-600 mb-4">{t(tool.descKey)}</p>
+                  <p className="text-gray-600 dark:text-zinc-400 mb-4">{t(tool.descKey)}</p>
 
                   <div className="mb-6">
-                    <h3 className="font-semibold mb-3 text-sm text-gray-700">{t('toolsPage.keyFeatures')}</h3>
+                    <h3 className="font-semibold mb-3 text-sm text-gray-700 dark:text-zinc-300">{t('toolsPage.keyFeatures')}</h3>
                     <ul className="space-y-2">
                       {tool.featureKeys.map((fk) => (
-                        <li key={fk} className="flex items-center gap-2 text-sm text-gray-600">
+                        <li key={fk} className="flex items-center gap-2 text-sm text-gray-600 dark:text-zinc-400">
                           <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
                           {t(fk)}
                         </li>
@@ -86,7 +86,7 @@ export default function RoboticsTools() {
             ))}
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-8">
             <h2 className="text-2xl font-bold mb-6">{t('toolsPage.learningResources')}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {learningResources.map((resource, index) => {
@@ -100,7 +100,7 @@ export default function RoboticsTools() {
                       <Icon className="w-6 h-6 text-blue-600" />
                     </div>
                     <h3 className="font-semibold mb-2">{t(resource.titleKey)}</h3>
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-zinc-400">
                       <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
                         {t(resource.typeKey)}
                       </span>

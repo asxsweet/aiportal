@@ -13,7 +13,9 @@ export default function ToolBadge({ tool, size = 'md' }: ToolBadgeProps) {
   return (
     <span
       className={`inline-flex items-center rounded-full font-medium ${
-        isEv3 ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'
+        isEv3
+          ? 'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300'
+          : 'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300'
       } ${sizeClass}`}
     >
       {isEv3 ? t('tools.ev3') : t('tools.tinkercad')}

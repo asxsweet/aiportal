@@ -58,15 +58,15 @@ export default function CommentSection({ projectId }: { projectId: string }) {
     r === 'teacher' ? t('comments.roleTeacher') : t('comments.roleStudent');
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold mb-4">{t('comments.title')}</h3>
+    <div className="bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800 p-6 transition-colors">
+      <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-zinc-50">{t('comments.title')}</h3>
 
-      {error && <p className="text-sm text-red-600 mb-3">{error}</p>}
+      {error && <p className="text-sm text-red-600 dark:text-red-400 mb-3">{error}</p>}
 
       {loading ? (
-        <p className="text-sm text-gray-500 mb-4">{t('loading')}</p>
+        <p className="text-sm text-gray-500 dark:text-zinc-400 mb-4">{t('loading')}</p>
       ) : comments.length === 0 ? (
-        <p className="text-sm text-gray-500 mb-4">{t('comments.empty')}</p>
+        <p className="text-sm text-gray-500 dark:text-zinc-400 mb-4">{t('comments.empty')}</p>
       ) : (
         <div className="space-y-4 mb-4 max-h-96 overflow-y-auto">
           {comments.map((comment) => (
@@ -78,13 +78,13 @@ export default function CommentSection({ projectId }: { projectId: string }) {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <span className="font-semibold text-sm">{comment.authorName}</span>
-                  <span className="text-xs text-gray-500">{roleLabel(comment.authorRole)}</span>
-                  <span className="text-xs text-gray-400">
+                  <span className="font-semibold text-sm text-gray-900 dark:text-zinc-100">{comment.authorName}</span>
+                  <span className="text-xs text-gray-500 dark:text-zinc-500">{roleLabel(comment.authorRole)}</span>
+                  <span className="text-xs text-gray-400 dark:text-zinc-500">
                     • {new Date(comment.createdAt).toLocaleString()}
                   </span>
                 </div>
-                <p className="text-sm text-gray-700">{comment.body}</p>
+                <p className="text-sm text-gray-700 dark:text-zinc-300">{comment.body}</p>
               </div>
             </div>
           ))}
@@ -97,7 +97,7 @@ export default function CommentSection({ projectId }: { projectId: string }) {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder={t('comments.placeholder')}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           disabled={submitting}
         />
         <button

@@ -112,57 +112,57 @@ export default function ProjectSubmission() {
       <div className="p-8">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{t('projectSubmit.title')}</h1>
-            <p className="text-gray-600">{t('projectSubmit.subtitle')}</p>
+            <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-zinc-50">{t('projectSubmit.title')}</h1>
+            <p className="text-gray-600 dark:text-zinc-400">{t('projectSubmit.subtitle')}</p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-700 border border-red-100">
+            <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-100 dark:border-red-900/50">
               {error}
             </div>
           )}
           {locked && (
-            <div className="mb-6 p-4 rounded-xl bg-amber-50 text-amber-700 border border-amber-200">
+            <div className="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-900/50">
               {t('assignmentDetail.deadlineExpired')}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-xl font-semibold mb-4">{t('projectSubmit.projectInfo')}</h2>
+            <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 transition-colors">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">{t('projectSubmit.projectInfo')}</h2>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                     {t('projectSubmit.projectTitle')} *
                   </label>
                   <input
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                     {t('projectSubmit.projectDescription')} *
                   </label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-xl font-semibold mb-4">{t('projectSubmit.toolsUsed')} *</h2>
-              <p className="text-sm text-gray-600 mb-4">{t('projectSubmit.toolsHint')}</p>
+            <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 transition-colors">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">{t('projectSubmit.toolsUsed')} *</h2>
+              <p className="text-sm text-gray-600 dark:text-zinc-400 mb-4">{t('projectSubmit.toolsHint')}</p>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <button
@@ -170,8 +170,8 @@ export default function ProjectSubmission() {
                   onClick={() => handleToolToggle('ev3')}
                   className={`p-6 border-2 rounded-xl transition-all text-left ${
                     formData.tools.includes('ev3')
-                      ? 'border-orange-500 bg-orange-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/30 dark:border-orange-600'
+                      : 'border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600'
                   }`}
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -182,8 +182,8 @@ export default function ProjectSubmission() {
                       <CheckCircle className="w-6 h-6 text-orange-600" />
                     )}
                   </div>
-                  <h3 className="font-semibold mb-1">{t('toolsPage.ev3Title')}</h3>
-                  <p className="text-sm text-gray-600">{t('toolsPage.ev3Desc')}</p>
+                  <h3 className="font-semibold mb-1 text-gray-900 dark:text-zinc-50">{t('toolsPage.ev3Title')}</h3>
+                  <p className="text-sm text-gray-600 dark:text-zinc-400">{t('toolsPage.ev3Desc')}</p>
                 </button>
 
                 <button
@@ -191,8 +191,8 @@ export default function ProjectSubmission() {
                   onClick={() => handleToolToggle('tinkercad')}
                   className={`p-6 border-2 rounded-xl transition-all text-left ${
                     formData.tools.includes('tinkercad')
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30 dark:border-blue-600'
+                      : 'border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600'
                   }`}
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -203,26 +203,26 @@ export default function ProjectSubmission() {
                       <CheckCircle className="w-6 h-6 text-blue-600" />
                     )}
                   </div>
-                  <h3 className="font-semibold mb-1">{t('toolsPage.tinkercadTitle')}</h3>
-                  <p className="text-sm text-gray-600">{t('toolsPage.tinkercadDesc')}</p>
+                  <h3 className="font-semibold mb-1 text-gray-900 dark:text-zinc-50">{t('toolsPage.tinkercadTitle')}</h3>
+                  <p className="text-sm text-gray-600 dark:text-zinc-400">{t('toolsPage.tinkercadDesc')}</p>
                 </button>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-xl font-semibold mb-4">{t('projectSubmit.uploadTitle')} *</h2>
-              <p className="text-sm text-gray-600 mb-4">{t('projectSubmit.uploadHint')}</p>
+            <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 transition-colors">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">{t('projectSubmit.uploadTitle')} *</h2>
+              <p className="text-sm text-gray-600 dark:text-zinc-400 mb-4">{t('projectSubmit.uploadHint')}</p>
               <FileUpload onFileSelect={setFile} acceptedFormats=".pdf,.doc,.docx" label="" />
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 transition-colors">
               <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                 <div>
-                  <h2 className="text-xl font-semibold flex items-center gap-2">
-                    <Users className="w-5 h-5 text-blue-600" />
+                  <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-900 dark:text-zinc-50">
+                    <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     {t('projectSubmit.team')}
                   </h2>
-                  <p className="text-sm text-gray-600 mt-1">{t('projectSubmit.teamHint')}</p>
+                  <p className="text-sm text-gray-600 dark:text-zinc-400 mt-1">{t('projectSubmit.teamHint')}</p>
                 </div>
                 <button
                   type="button"
@@ -240,7 +240,7 @@ export default function ProjectSubmission() {
                       type="text"
                       value={member}
                       onChange={(e) => handleTeamMemberChange(index, e.target.value)}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-4 py-3 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder={t('projectSubmit.memberPlaceholder', { n: index + 1 })}
                     />
                     {formData.teamMembers.length > 1 && (
@@ -273,7 +273,7 @@ export default function ProjectSubmission() {
               <button
                 type="button"
                 onClick={() => navigate(`/assignment/${id}`)}
-                className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-all font-semibold"
+                className="px-8 py-4 border-2 border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-zinc-200 rounded-lg hover:border-gray-400 dark:hover:border-zinc-500 hover:bg-gray-50 dark:hover:bg-zinc-800/50 transition-all font-semibold"
               >
                 {t('cancel')}
               </button>
