@@ -151,6 +151,9 @@ export const downloadAttachment = asyncHandler(async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) return fail(res, 'Invalid id', 400);
   const a = await Assignment.findById(req.params.id).lean();
   if (!a?.fileUrl) return fail(res, 'No attachment', 404);
+  if (req.user.role === 'student' && a.status === 'archived') {
+    return fail(res, 'Assignment not found', 404);
+  }
   const full = path.join(config.uploadDir, a.fileUrl);
   if (!fs.existsSync(full)) return fail(res, 'File missing', 404);
   res.download(full, a.attachmentOriginalName || 'attachment');

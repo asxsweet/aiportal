@@ -1,6 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { randomUUID } from 'node:crypto';
 import { config } from '../config.js';
 import { safeBaseNameFromUpload } from '../utils/filename.js';
 
@@ -16,7 +17,8 @@ function makeStorage(subfolder) {
   return multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, dest),
     filename: (_req, file, cb) => {
-      cb(null, safeBaseNameFromUpload(file.originalname));
+      const base = safeBaseNameFromUpload(file.originalname);
+      cb(null, `${randomUUID()}-${base}`);
     },
   });
 }

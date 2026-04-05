@@ -36,6 +36,14 @@ function parsePage(req) {
   return { page, pageSize, offset: (page - 1) * pageSize };
 }
 
+function idString(x) {
+  if (x == null) return '';
+  if (typeof x === 'object' && x !== null && '_id' in x && x._id != null) {
+    return String(x._id);
+  }
+  return String(x);
+}
+
 function parseTeamObjectIds(rawList) {
   const ids = [];
   for (const x of rawList) {
@@ -68,7 +76,7 @@ export const downloadProjectFile = asyncHandler(async (req, res) => {
   const row = await Project.findById(req.params.id).populate({ path: 'assignmentId', select: 'createdBy' }).lean();
   if (!row) return fail(res, 'Not found', 404);
   const ownerId = row.assignmentId?.createdBy ? String(row.assignmentId.createdBy) : null;
-  if (req.user.role === 'student' && String(row.studentId) !== req.user.id) {
+  if (req.user.role === 'student' && idString(row.studentId) !== String(req.user.id)) {
     return fail(res, 'Forbidden', 403);
   }
   if (req.user.role === 'teacher' && ownerId !== req.user.id) {
