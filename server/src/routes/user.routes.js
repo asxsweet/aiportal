@@ -13,6 +13,7 @@ router.post('/avatar', authRequired, avatarUpload.single('file'), userController
 router.post('/logout-all', authRequired, userController.logoutAllDevices);
 router.delete('/me', authRequired, userController.deleteAccount);
 router.get('/students', authRequired, requireRole('teacher'), userController.listStudents);
+router.delete('/students/:studentId', authRequired, requireRole('teacher'), userController.deleteStudentByTeacher);
 
 export default router;
 

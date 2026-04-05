@@ -220,7 +220,13 @@
     "overallProgress": "Overall progress",
     "noStudents": "No students found.",
     "loadError": "Could not load students.",
-    "na": "N/A"
+    "na": "N/A",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete student?",
+    "deleteConfirmMessage": "Are you sure you want to delete this student? This permanently removes their account, submissions, comments, and grades.",
+    "confirmDelete": "Confirm Delete",
+    "deleteSuccess": "Student deleted successfully",
+    "deleteError": "Could not delete student."
   },
   "analytics": {
     "title": "Analytics dashboard",

@@ -254,6 +254,37 @@ export const deleteAccount = asyncHandler(async (req, res) => {
   return ok(res, null, 'Account deleted');
 });
 
+/**
+ * Teacher-only: permanently delete a student account and all related data (projects, files, ratings, comments).
+ */
+export const deleteStudentByTeacher = asyncHandler(async (req, res) => {
+  const { studentId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(studentId)) return fail(res, 'Invalid id', 400);
+  const target = await User.findById(studentId).lean();
+  if (!target) return fail(res, 'Student not found', 404);
+  if (target.role !== 'student') return fail(res, 'Only student accounts can be deleted', 400);
+
+  const uid = target._id;
+
+  await Project.updateMany({ teamMembers: uid }, { $pull: { teamMembers: uid } });
+
+  const projects = await Project.find({ studentId: uid }).lean();
+  const pids = projects.map((p) => p._id);
+  if (pids.length) {
+    await Rating.deleteMany({ projectId: { $in: pids } });
+    await Comment.deleteMany({ $or: [{ projectId: { $in: pids } }, { userId: uid }] });
+  } else {
+    await Comment.deleteMany({ userId: uid });
+  }
+  for (const p of projects) unlinkSafe(p.fileUrl);
+  await Project.deleteMany({ studentId: uid });
+
+  unlinkSafe(target.avatar);
+  await User.deleteOne({ _id: uid });
+
+  return ok(res, null, 'Student deleted successfully');
+});
+
 export const listStudents = asyncHandler(async (req, res) => {
   const { page, pageSize, offset } = parsePage(req);
   const search = (req.query.search || '').trim();

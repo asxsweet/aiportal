@@ -1,6 +1,7 @@
-import { Search, Mail, TrendingUp, TrendingDown, Filter } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { Search, Mail, TrendingUp, TrendingDown, Filter, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { api, getErrorMessage } from '@/lib/api';
 import SidebarLayout from '../components/SidebarLayout';
 
@@ -31,35 +32,36 @@ export default function Students() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [scoreFilter, setScoreFilter] = useState<ScoreFilter>('all');
+  const [deleteTarget, setDeleteTarget] = useState<Row | null>(null);
+  const [deletePending, setDeletePending] = useState(false);
 
   useEffect(() => {
     const h = setTimeout(() => setDebounced(searchTerm), 300);
     return () => clearTimeout(h);
   }, [searchTerm]);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { data } = await api.get<{ data: Row[]; totalPages: number }>('/api/users/students', {
-          params: { page, pageSize: 10, search: debounced || undefined },
-        });
-        if (!cancelled) {
-          setRows(data.data);
-          setTotalPages(data.totalPages);
-        }
-      } catch (e) {
-        if (!cancelled) setError(getErrorMessage(e, t('students.loadError')));
-      } finally {
-        if (!cancelled) setLoading(false);
+  const fetchStudents = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await api.get<{ data: Row[]; totalPages: number }>('/api/users/students', {
+        params: { page, pageSize: 10, search: debounced || undefined },
+      });
+      setRows(data.data);
+      setTotalPages(data.totalPages);
+      if (data.data.length === 0 && page > 1) {
+        setPage((p) => Math.max(1, p - 1));
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    } catch (e) {
+      setError(getErrorMessage(e, t('students.loadError')));
+    } finally {
+      setLoading(false);
+    }
   }, [page, debounced, t]);
+
+  useEffect(() => {
+    void fetchStudents();
+  }, [fetchStudents]);
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {
@@ -108,6 +110,41 @@ export default function Students() {
       `students-${new Date().toISOString().slice(0, 10)}.json`,
       'application/json',
     );
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget.user.id;
+    setDeletePending(true);
+    try {
+      await api.delete(`/api/users/students/${id}`);
+      toast.success(t('students.deleteSuccess'));
+      setDeleteTarget(null);
+      try {
+        const { data } = await api.get<{ data: Row[]; totalPages: number }>('/api/users/students', {
+          params: { page, pageSize: 10, search: debounced || undefined },
+        });
+        setRows(data.data);
+        setTotalPages(data.totalPages);
+        if (data.data.length === 0 && page > 1) {
+          setPage((p) => Math.max(1, p - 1));
+        }
+      } catch {
+        try {
+          const { data } = await api.get<{ data: Row[]; totalPages: number }>('/api/users/students', {
+            params: { page, pageSize: 10, search: debounced || undefined },
+          });
+          setRows(data.data);
+          setTotalPages(data.totalPages);
+        } catch {
+          /* list may be stale; avoid full-page spinner */
+        }
+      }
+    } catch (e) {
+      toast.error(getErrorMessage(e, t('students.deleteError')));
+    } finally {
+      setDeletePending(false);
+    }
   };
 
   return (
@@ -193,24 +230,24 @@ export default function Students() {
                   >
                     <div className="flex items-start justify-between flex-wrap gap-4">
                       <div className="flex items-start gap-4 flex-1 min-w-[240px]">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xl font-bold">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xl font-bold shrink-0">
                           {user.name
                             .split(' ')
                             .map((n) => n[0])
                             .join('')
                             .slice(0, 2)}
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-2 flex-wrap">
                             <h3 className="text-xl font-semibold text-gray-900 dark:text-zinc-50">{user.name}</h3>
                             {trendUp ? (
-                              <TrendingUp className="w-5 h-5 text-green-500" />
+                              <TrendingUp className="w-5 h-5 text-green-500 shrink-0" />
                             ) : (
-                              <TrendingDown className="w-5 h-5 text-red-400" />
+                              <TrendingDown className="w-5 h-5 text-red-400 shrink-0" />
                             )}
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-zinc-400 mb-4">
-                            <Mail className="w-4 h-4" />
+                            <Mail className="w-4 h-4 shrink-0" />
                             {user.email}
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -244,6 +281,16 @@ export default function Students() {
                             </div>
                           </div>
                         </div>
+                      </div>
+                      <div className="shrink-0 w-full sm:w-auto flex justify-end sm:justify-start">
+                        <button
+                          type="button"
+                          onClick={() => setDeleteTarget(row)}
+                          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-950/70 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50"
+                        >
+                          <Trash2 className="w-4 h-4" aria-hidden />
+                          {t('students.delete')}
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -283,6 +330,52 @@ export default function Students() {
           )}
         </div>
       </div>
+
+      {deleteTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          role="presentation"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !deletePending) setDeleteTarget(null);
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-student-title"
+            className="w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 shadow-2xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="delete-student-title" className="text-lg font-bold text-gray-900 dark:text-zinc-50">
+              {t('students.deleteConfirmTitle')}
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-zinc-400 mt-2 leading-relaxed">
+              {t('students.deleteConfirmMessage')}
+            </p>
+            <p className="text-sm font-medium text-gray-900 dark:text-zinc-100 mt-3 truncate" title={deleteTarget.user.email}>
+              {deleteTarget.user.name} · {deleteTarget.user.email}
+            </p>
+            <div className="flex gap-2 mt-6">
+              <button
+                type="button"
+                disabled={deletePending}
+                onClick={() => setDeleteTarget(null)}
+                className="flex-1 rounded-xl border border-gray-300 dark:border-zinc-600 py-2.5 text-sm font-medium text-gray-800 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 disabled:opacity-50 transition-colors"
+              >
+                {t('cancel')}
+              </button>
+              <button
+                type="button"
+                disabled={deletePending}
+                onClick={() => void handleConfirmDelete()}
+                className="flex-1 rounded-xl bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+              >
+                {deletePending ? t('loading') : t('students.confirmDelete')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </SidebarLayout>
   );
 }
