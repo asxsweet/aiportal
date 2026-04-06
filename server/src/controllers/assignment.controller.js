@@ -8,6 +8,7 @@ import { formatAssignment } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ok, fail } from '../utils/helpers.js';
 import { safeBaseNameFromUpload } from '../utils/filename.js';
+import { getExistingUploadFilePath } from '../utils/uploadPath.js';
 
 const toolsSchema = z.array(z.enum(['ev3', 'tinkercad'])).min(1);
 const createFieldsSchema = z.object({
@@ -135,13 +136,13 @@ export const deleteAssignment = asyncHandler(async (req, res) => {
   await Project.deleteMany({ assignmentId: a._id });
   await Assignment.deleteOne({ _id: a._id });
   if (a.fileUrl) {
-    const full = path.join(config.uploadDir, a.fileUrl);
-    if (fs.existsSync(full)) fs.unlinkSync(full);
+    const full = getExistingUploadFilePath(a.fileUrl);
+    if (full) fs.unlinkSync(full);
   }
   for (const p of projects) {
     if (p.fileUrl) {
-      const f = path.join(config.uploadDir, p.fileUrl);
-      if (fs.existsSync(f)) fs.unlinkSync(f);
+      const f = getExistingUploadFilePath(p.fileUrl);
+      if (f) fs.unlinkSync(f);
     }
   }
   return ok(res, null, 'Assignment deleted');
@@ -154,8 +155,8 @@ export const downloadAttachment = asyncHandler(async (req, res) => {
   if (req.user.role === 'student' && a.status === 'archived') {
     return fail(res, 'Assignment not found', 404);
   }
-  const full = path.join(config.uploadDir, a.fileUrl);
-  if (!fs.existsSync(full)) return fail(res, 'File missing', 404);
+  const full = getExistingUploadFilePath(a.fileUrl);
+  if (!full) return fail(res, 'File missing', 404);
   res.download(full, a.attachmentOriginalName || 'attachment');
 });
 

@@ -9,6 +9,7 @@ import { formatUser } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { signToken } from './auth.controller.js';
 import { ok, fail } from '../utils/helpers.js';
+import { getExistingUploadFilePath } from '../utils/uploadPath.js';
 
 function parsePage(req) {
   const page = Math.max(1, Number(req.query.page) || 1);
@@ -18,8 +19,8 @@ function parsePage(req) {
 
 function unlinkSafe(rel) {
   if (!rel) return;
-  const full = path.join(config.uploadDir, rel);
-  if (fs.existsSync(full)) fs.unlinkSync(full);
+  const full = getExistingUploadFilePath(rel);
+  if (full) fs.unlinkSync(full);
 }
 
 function profileCompletionPct(u) {

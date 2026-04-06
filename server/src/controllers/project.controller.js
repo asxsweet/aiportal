@@ -9,6 +9,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { evaluateProject, averageAiScore } from '../services/aiEvaluation.js';
 import { ok, fail } from '../utils/helpers.js';
 import { safeBaseNameFromUpload } from '../utils/filename.js';
+import { getExistingUploadFilePath } from '../utils/uploadPath.js';
 
 const createFieldsSchema = z.object({
   assignmentId: z.string(),
@@ -82,8 +83,8 @@ export const downloadProjectFile = asyncHandler(async (req, res) => {
   if (req.user.role === 'teacher' && ownerId !== req.user.id) {
     return fail(res, 'Forbidden', 403);
   }
-  const full = path.join(config.uploadDir, row.fileUrl);
-  if (!fs.existsSync(full)) return fail(res, 'File missing', 404);
+  const full = getExistingUploadFilePath(row.fileUrl);
+  if (!full) return fail(res, 'File missing', 404);
   res.download(full, row.originalFilename || 'submission');
 });
 

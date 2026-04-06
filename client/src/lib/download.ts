@@ -1,6 +1,10 @@
 import { api, getErrorMessage } from './api';
 
-export async function downloadBlob(path: string, filename: string) {
+/**
+ * Downloads a binary from the API. Shows errors via alert and resolves without throwing
+ * so callers are not left with uncaught promise rejections.
+ */
+export async function downloadBlob(path: string, filename: string): Promise<void> {
   try {
     const res = await api.get(path, { responseType: 'blob' });
     const ct = String(res.headers['content-type'] || '').toLowerCase();
@@ -13,7 +17,8 @@ export async function downloadBlob(path: string, filename: string) {
       } catch {
         /* keep default */
       }
-      throw new Error(msg);
+      window.alert(msg);
+      return;
     }
     const blob = res.data as Blob;
     const url = URL.createObjectURL(blob);
@@ -27,6 +32,5 @@ export async function downloadBlob(path: string, filename: string) {
   } catch (e) {
     const msg = getErrorMessage(e, 'Download failed');
     window.alert(msg);
-    throw e;
   }
 }

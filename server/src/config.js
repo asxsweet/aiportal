@@ -6,12 +6,20 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const defaultUploadDir = path.join(__dirname, '../../uploads');
+function resolveUploadDir() {
+  const raw = process.env.UPLOAD_DIR;
+  if (!raw || !String(raw).trim()) return path.resolve(defaultUploadDir);
+  const s = String(raw).trim();
+  return path.isAbsolute(s) ? path.resolve(s) : path.resolve(process.cwd(), s);
+}
+
 export const config = {
   port: Number(process.env.PORT) || 4001,
   mongoUri: process.env.MONGO_URI || '',
   jwtSecret: process.env.JWT_SECRET || 'dev-secret-change-me',
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
-  uploadDir: path.resolve(process.env.UPLOAD_DIR || path.join(__dirname, '../../uploads')),
+  uploadDir: resolveUploadDir(),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   /** Google AI Studio: https://aistudio.google.com/apikey */
   geminiApiKey: (process.env.GEMINI_API_KEY || '').trim(),
