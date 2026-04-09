@@ -22,6 +22,8 @@ export default function ProjectSubmission() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [locked, setLocked] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const maxVideoSizeBytes = 50 * 1024 * 1024;
 
   const language = (() => {
     const raw = (i18n.resolvedLanguage || i18n.language || 'en').toLowerCase();
@@ -29,6 +31,9 @@ export default function ProjectSubmission() {
     if (raw.startsWith('kz')) return 'kz';
     return 'en';
   })();
+
+  const isVideoFile = (f: File | null) =>
+    Boolean(f && ['video/mp4', 'video/webm', 'video/quicktime'].includes(f.type));
 
   const handleToolToggle = (tool: 'ev3' | 'tinkercad') => {
     setFormData((prev) => ({
@@ -69,6 +74,43 @@ export default function ProjectSubmission() {
       cancelled = true;
     };
   }, [id]);
+
+  useEffect(() => {
+    if (!file || !isVideoFile(file)) {
+      setPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  const handleFileSelect = (selected: File | null) => {
+    setError(null);
+    if (!selected) {
+      setFile(null);
+      return;
+    }
+    const allowedMime = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'video/mp4',
+      'video/webm',
+      'video/quicktime',
+    ];
+    if (!allowedMime.includes(selected.type)) {
+      setError(t('projectSubmit.invalidFormat'));
+      setFile(null);
+      return;
+    }
+    if (isVideoFile(selected) && selected.size > maxVideoSizeBytes) {
+      setError(t('projectSubmit.videoTooLarge'));
+      setFile(null);
+      return;
+    }
+    setFile(selected);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,7 +218,7 @@ export default function ProjectSubmission() {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-                      <span className="text-2xl">🤖</span>
+                      <span className="text-2xl">??</span>
                     </div>
                     {formData.tools.includes('ev3') && (
                       <CheckCircle className="w-6 h-6 text-orange-600" />
@@ -197,7 +239,7 @@ export default function ProjectSubmission() {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
-                      <span className="text-2xl">⚡</span>
+                      <span className="text-2xl">?</span>
                     </div>
                     {formData.tools.includes('tinkercad') && (
                       <CheckCircle className="w-6 h-6 text-blue-600" />
@@ -212,7 +254,21 @@ export default function ProjectSubmission() {
             <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 transition-colors">
               <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">{t('projectSubmit.uploadTitle')} *</h2>
               <p className="text-sm text-gray-600 dark:text-zinc-400 mb-4">{t('projectSubmit.uploadHint')}</p>
-              <FileUpload onFileSelect={setFile} acceptedFormats=".pdf,.doc,.docx" label="" />
+              <div className="mb-3 rounded-lg border border-blue-100 dark:border-blue-900/50 bg-blue-50 dark:bg-blue-950/30 px-3 py-2 text-sm text-blue-800 dark:text-blue-300">
+                {t('projectSubmit.videoQualityHint')}
+              </div>
+              <div className="mb-3 text-xs text-gray-600 dark:text-zinc-400">
+                {t('projectSubmit.maxVideoHint')}
+              </div>
+              <FileUpload onFileSelect={handleFileSelect} acceptedFormats=".pdf,.doc,.docx,.mp4,.webm,.mov" label="" />
+              {previewUrl && file && isVideoFile(file) && (
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">{t('projectSubmit.videoPreview')}</p>
+                  <video controls width={400} className="max-w-full rounded-lg border border-gray-200 dark:border-zinc-700">
+                    <source src={previewUrl} type={file.type} />
+                  </video>
+                </div>
+              )}
             </div>
 
             <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-sm border border-gray-100 dark:border-zinc-800 p-6 transition-colors">

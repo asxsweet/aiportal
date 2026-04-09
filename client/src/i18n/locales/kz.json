@@ -164,14 +164,24 @@
     "toolsUsed": "Қолданылған құралдар",
     "toolsHint": "Барлығын таңдаңыз",
     "uploadTitle": "Жоба файлы",
-    "uploadHint": "PDF, DOC немесе DOCX (міндетті)",
+    "uploadHint": "PDF, DOC, DOCX, MP4, WEBM немесе MOV (міндетті)",
+    "videoQualityHint": "Видео сапасын таңдаңыз: 720P, 480P немесе 240P",
+    "maxVideoHint": "Видеоның ең үлкен өлшемі: 50MB",
+    "maxVideoHintByQuality": "Сапа бойынша шек: 720P={{q720}}MB, 480P={{q480}}MB, 240P={{q240}}MB",
+    "videoQualitySelect": "Видео сапасы",
+    "videoPreview": "Видео алдын ала қарау",
+    "videoTooLarge": "Видео 50MB-тан кіші болуы керек",
+    "videoTooLargeByQuality": "{{quality}} үшін видео тым үлкен. Максимум: {{maxMb}}MB.",
+    "videoResolutionTooHigh": "{{quality}} үшін видео ажыратымдылығы тым жоғары. Төмен сапа таңдаңыз.",
+    "videoMetadataError": "Видео метадеректерін оқу мүмкін болмады. Басқа файл таңдаңыз.",
+    "invalidFormat": "Файл форматы қате. PDF, DOC, DOCX, MP4, WEBM немесе MOV қолданыңыз.",
     "team": "Команда мүшелері",
     "teamHint": "Қосымша (жеке жоба үшін бос қалдыруға болады)",
     "addMember": "Қосу",
     "remove": "Жою",
     "memberPlaceholder": "{{n}}-қатысушы аты",
     "success": "Жоба жіберілді",
-    "fileRequired": "PDF, DOC немесе DOCX файлын тіркеңіз.",
+    "fileRequired": "Дұрыс файл тіркеңіз (PDF, DOC, DOCX, MP4, WEBM немесе MOV).",
     "loadError": "Жоба жіберілмеді."
   },
   "projectView": {
@@ -385,3 +395,4 @@
     "lightMode": "Жарық тема"
   }
 }
+

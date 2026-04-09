@@ -5,7 +5,9 @@ import { randomUUID } from 'node:crypto';
 import { config } from '../config.js';
 import { safeBaseNameFromUpload } from '../utils/filename.js';
 
-const allowedExt = new Set(['.pdf', '.doc', '.docx']);
+const docExts = new Set(['.pdf', '.doc', '.docx']);
+const projectVideoMimeTypes = new Set(['video/mp4', 'video/webm', 'video/quicktime']);
+const projectVideoExts = new Set(['.mp4', '.webm', '.mov']);
 
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -23,24 +25,34 @@ function makeStorage(subfolder) {
   });
 }
 
-function fileFilter(_req, file, cb) {
+function assignmentFileFilter(_req, file, cb) {
   const ext = path.extname(safeBaseNameFromUpload(file.originalname)).toLowerCase();
-  if (!allowedExt.has(ext)) {
+  if (!docExts.has(ext)) {
     return cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'Only PDF, DOC, and DOCX are allowed'));
+  }
+  cb(null, true);
+}
+
+function projectFileFilter(_req, file, cb) {
+  const ext = path.extname(safeBaseNameFromUpload(file.originalname)).toLowerCase();
+  const isDoc = docExts.has(ext);
+  const isVideo = projectVideoExts.has(ext) && projectVideoMimeTypes.has(String(file.mimetype || '').toLowerCase());
+  if (!isDoc && !isVideo) {
+    return cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'Only PDF, DOC, DOCX, MP4, WEBM, or MOV are allowed'));
   }
   cb(null, true);
 }
 
 export const assignmentUpload = multer({
   storage: makeStorage('assignments'),
-  fileFilter,
+  fileFilter: assignmentFileFilter,
   limits: { fileSize: 15 * 1024 * 1024 },
 });
 
 export const projectUpload = multer({
   storage: makeStorage('projects'),
-  fileFilter,
-  limits: { fileSize: 15 * 1024 * 1024 },
+  fileFilter: projectFileFilter,
+  limits: { fileSize: 50 * 1024 * 1024 },
 });
 
 const imageExts = new Set(['.jpg', '.jpeg', '.jfif', '.png', '.webp', '.gif']);

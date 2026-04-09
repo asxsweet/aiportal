@@ -92,6 +92,7 @@ export function formatProject(doc, extras = {}) {
     storedName,
     originalFileName: originalFileName || null,
     originalFilename: decodeOriginalFileName(o.originalFilename || '') || null,
+    mimeType: o.mimeType || '',
     tools: o.tools || [],
     status: o.status,
     submittedAt: o.createdAt,

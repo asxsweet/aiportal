@@ -34,6 +34,7 @@ type Project = {
   originalFilename?: string;
   originalFileName?: string;
   storedName?: string;
+  mimeType?: string;
   studentName?: string;
   rating: Rating | null;
 };
@@ -50,6 +51,7 @@ export default function ProjectView() {
   const [teacherFeedback, setTeacherFeedback] = useState('');
   const [gradePending, setGradePending] = useState(false);
   const [gradeMsg, setGradeMsg] = useState<string | null>(null);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
 
   const load = async () => {
     if (!id) return;
@@ -74,6 +76,34 @@ export default function ProjectView() {
   useEffect(() => {
     void load();
   }, [id]);
+
+  useEffect(() => {
+    let cancelled = false;
+    let objectUrl: string | null = null;
+    const maybeVideo = project?.mimeType?.startsWith('video/')
+      || /\.(mp4|webm|mov)$/i.test(project?.storedName || project?.originalFilename || project?.originalFileName || '');
+
+    if (!project?.id || !maybeVideo) {
+      setVideoPreviewUrl(null);
+      return;
+    }
+
+    (async () => {
+      try {
+        const res = await api.get(`/api/projects/${project.id}/file`, { responseType: 'blob' });
+        if (cancelled) return;
+        objectUrl = URL.createObjectURL(res.data as Blob);
+        setVideoPreviewUrl(objectUrl);
+      } catch {
+        if (!cancelled) setVideoPreviewUrl(null);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [project?.id, project?.mimeType, project?.storedName, project?.originalFilename, project?.originalFileName]);
 
   const handleGrade = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -200,6 +230,13 @@ export default function ProjectView() {
                 {t('download')}
               </button>
             </div>
+            {videoPreviewUrl && (
+              <div className="mt-4">
+                <video controls width={400} className="max-w-full rounded-lg border border-gray-200 dark:border-zinc-700">
+                  <source src={videoPreviewUrl} type={project.mimeType || 'video/mp4'} />
+                </video>
+              </div>
+            )}
           </div>
 
           <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-zinc-900 dark:to-zinc-900 rounded-xl shadow-sm border border-blue-100 dark:border-zinc-800 p-8 mb-6 transition-colors">

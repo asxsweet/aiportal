@@ -2,7 +2,12 @@ import multer from 'multer';
 import mongoose from 'mongoose';
 
 export function errorHandler(err, _req, res, _next) {
-  if (err instanceof multer.MulterError) return res.status(400).json({ error: err.message || 'File upload error' });
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE' && _req?.path?.startsWith('/api/projects')) {
+      return res.status(400).json({ error: 'Video must be less than 50MB' });
+    }
+    return res.status(400).json({ error: err.message || 'File upload error' });
+  }
   if (err instanceof mongoose.Error.ValidationError) {
     return res.status(400).json({
       error: err.message,

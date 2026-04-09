@@ -168,7 +168,7 @@ export const getProjectById = asyncHandler(async (req, res) => {
 
 export const createProject = asyncHandler(async (req, res) => {
   if (!req.file) {
-    return fail(res, 'File is required (PDF, DOC, DOCX)', 400);
+    return fail(res, 'File is required (PDF, DOC, DOCX, MP4, WEBM, MOV)', 400);
   }
   const body = createFieldsSchema.parse(req.body);
   if (!mongoose.Types.ObjectId.isValid(body.assignmentId)) {
@@ -213,6 +213,7 @@ export const createProject = asyncHandler(async (req, res) => {
       description: body.description,
       fileUrl: relPath,
       originalFilename: safeBaseNameFromUpload(req.file.originalname),
+      mimeType: req.file.mimetype || '',
       tools: body.tools,
       teamMembers: teamMemberIds,
     });

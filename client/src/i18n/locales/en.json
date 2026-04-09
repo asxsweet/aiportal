@@ -164,14 +164,24 @@
     "toolsUsed": "Tools used",
     "toolsHint": "Select all tools you used in this project",
     "uploadTitle": "Upload project file",
-    "uploadHint": "PDF, DOC, or DOCX (required)",
+    "uploadHint": "PDF, DOC, DOCX, MP4, WEBM, or MOV (required)",
+    "videoQualityHint": "Upload video in 720p or 480p only",
+    "maxVideoHint": "Maximum video size: 50MB",
+    "maxVideoHintByQuality": "Max video size by quality: 720P={{q720}}MB, 480P={{q480}}MB, 240P={{q240}}MB",
+    "videoQualitySelect": "Video quality",
+    "videoPreview": "Video preview",
+    "videoTooLarge": "Video must be less than 50MB",
+    "videoTooLargeByQuality": "Video is too large for {{quality}}. Maximum: {{maxMb}}MB.",
+    "videoResolutionTooHigh": "Video resolution is too high for {{quality}}. Please use lower resolution.",
+    "videoMetadataError": "Could not read video metadata. Please choose another file.",
+    "invalidFormat": "Invalid file format. Use PDF, DOC, DOCX, MP4, WEBM, or MOV.",
     "team": "Team members",
     "teamHint": "Add your team members (optional for solo projects)",
     "addMember": "Add member",
     "remove": "Remove",
     "memberPlaceholder": "Team member {{n}} name",
     "success": "Project submitted",
-    "fileRequired": "Please attach a PDF, DOC, or DOCX file.",
+    "fileRequired": "Please attach a valid file (PDF, DOC, DOCX, MP4, WEBM, or MOV).",
     "loadError": "Could not submit project."
   },
   "projectView": {
@@ -385,3 +395,4 @@
     "lightMode": "Light mode"
   }
 }
+

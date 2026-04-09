@@ -20,6 +20,10 @@ const projectSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    mimeType: {
+      type: String,
+      default: '',
+    },
     tools: {
       type: [String],
       required: true,

@@ -164,14 +164,24 @@
     "toolsUsed": "Использованные инструменты",
     "toolsHint": "Выберите все использованные инструменты",
     "uploadTitle": "Файл проекта",
-    "uploadHint": "PDF, DOC или DOCX (обязательно)",
+    "uploadHint": "PDF, DOC, DOCX, MP4, WEBM или MOV (обязательно)",
+    "videoQualityHint": "Выберите качество видео: 720P, 480P или 240P",
+    "maxVideoHint": "Максимальный размер видео: 50MB",
+    "maxVideoHintByQuality": "Лимит по качеству: 720P={{q720}}MB, 480P={{q480}}MB, 240P={{q240}}MB",
+    "videoQualitySelect": "Качество видео",
+    "videoPreview": "Предпросмотр видео",
+    "videoTooLarge": "Видео должно быть меньше 50MB",
+    "videoTooLargeByQuality": "Видео слишком большое для {{quality}}. Максимум: {{maxMb}}MB.",
+    "videoResolutionTooHigh": "Разрешение видео слишком высокое для {{quality}}. Выберите более низкое качество.",
+    "videoMetadataError": "Не удалось прочитать метаданные видео. Выберите другой файл.",
+    "invalidFormat": "Недопустимый формат. Используйте PDF, DOC, DOCX, MP4, WEBM или MOV.",
     "team": "Команда",
     "teamHint": "Участники команды (необязательно)",
     "addMember": "Добавить",
     "remove": "Удалить",
     "memberPlaceholder": "Имя участника {{n}}",
     "success": "Проект отправлен",
-    "fileRequired": "Прикрепите файл PDF, DOC или DOCX.",
+    "fileRequired": "Прикрепите корректный файл (PDF, DOC, DOCX, MP4, WEBM или MOV).",
     "loadError": "Не удалось отправить проект."
   },
   "projectView": {
@@ -385,3 +395,4 @@
     "lightMode": "Светлая тема"
   }
 }
+
