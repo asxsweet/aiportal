@@ -5,6 +5,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import TeacherDashboard from './pages/TeacherDashboard';
 import StudentDashboard from './pages/StudentDashboard';
+import StudentAssignments from './pages/StudentAssignments';
+import StudentBadges from './pages/StudentBadges';
+import StudentScoreChart from './pages/StudentScoreChart';
 import TeacherAssignments from './pages/TeacherAssignments';
 import AssignmentDetail from './pages/AssignmentDetail';
 import ProjectSubmission from './pages/ProjectSubmission';
@@ -56,6 +59,30 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute role="student">
         <StudentDashboard />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/student/assignments',
+    element: (
+      <ProtectedRoute role="student">
+        <StudentAssignments />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/student/badges',
+    element: (
+      <ProtectedRoute role="student">
+        <StudentBadges />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/student/scores',
+    element: (
+      <ProtectedRoute role="student">
+        <StudentScoreChart />
       </ProtectedRoute>
     ),
   },

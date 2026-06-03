@@ -8,6 +8,7 @@ import { formatAssignment } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ok, fail } from '../utils/helpers.js';
 import { safeBaseNameFromUpload } from '../utils/filename.js';
+import { createNotification } from './notification.controller.js';
 import { getExistingUploadFilePath } from '../utils/uploadPath.js';
 import { uploadFile, getDownloadInfo, deleteFile, makeS3Key, s3Key } from '../services/storage.js';
 
@@ -92,6 +93,15 @@ export const createAssignment = asyncHandler(async (req, res) => {
   try {
     const doc = await Assignment.create({ title: body.title, description: body.description, deadline: new Date(body.deadline), status: 'active', fileUrl, attachmentOriginalName, tools: body.tools, createdBy: req.user.id });
     const populated = await Assignment.findById(doc._id).populate('createdBy', 'name').lean();
+
+    User.find({ role: 'student' }).select('_id').lean()
+      .then((students) => {
+        for (const s of students) {
+          createNotification(String(s._id), 'new_assignment', 'New assignment', `${body.title} — check it out`, `/assignment/${doc._id}`).catch(() => {});
+        }
+      })
+      .catch(() => {});
+
     return ok(res, { assignment: formatAssignment(populated, populated.createdBy?.name) }, 'Assignment created');
   } catch (e) {
     if (req.file?.path && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);

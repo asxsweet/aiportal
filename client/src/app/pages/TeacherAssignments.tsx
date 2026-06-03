@@ -5,6 +5,21 @@ import { useNavigate } from 'react-router';
 import SidebarLayout from '../components/SidebarLayout';
 import { api, getErrorMessage } from '@/lib/api';
 
+type Template = {
+  key: string;
+  tools: Tool[];
+  daysFromNow: number;
+};
+
+const TEMPLATES: Template[] = [
+  { key: 'ev3LineFollower', tools: ['ev3'], daysFromNow: 14 },
+  { key: 'ev3ObstacleAvoidance', tools: ['ev3'], daysFromNow: 14 },
+  { key: 'ev3RoboticArm', tools: ['ev3'], daysFromNow: 21 },
+  { key: 'tinkercadCircuitDesign', tools: ['tinkercad'], daysFromNow: 10 },
+  { key: 'tinkercadSimulation', tools: ['tinkercad'], daysFromNow: 10 },
+  { key: 'combinedSensorProject', tools: ['ev3', 'tinkercad'], daysFromNow: 21 },
+];
+
 type Tool = 'ev3' | 'tinkercad';
 type AssignmentStatus = 'active' | 'expired' | 'archived';
 
@@ -275,9 +290,31 @@ export default function TeacherAssignments() {
               </button>
             </div>
 
-            <div className="p-6 space-y-5">
+            <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
               {!editTarget && (
                 <>
+                  <div>
+                    <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{t('templates.label')}</span>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {TEMPLATES.map((tpl) => (
+                        <button
+                          key={tpl.key}
+                          type="button"
+                          onClick={() => {
+                            const deadlineDate = new Date();
+                            deadlineDate.setDate(deadlineDate.getDate() + tpl.daysFromNow);
+                            setTitle(t(`templates.${tpl.key}.title`));
+                            setDescription(t(`templates.${tpl.key}.description`));
+                            setDeadline(deadlineDate.toISOString().slice(0, 16));
+                            setTools(tpl.tools);
+                          }}
+                          className="px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-zinc-600 text-gray-800 dark:text-zinc-200 hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:border-blue-400 transition-colors"
+                        >
+                          {t(`templates.${tpl.key}.title`)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <label className="block">
                     <span className="text-sm font-medium text-gray-700 dark:text-zinc-300">{t('createAssignment.assignmentTitle')}</span>
                     <input

@@ -8,6 +8,9 @@ import {
   LogOut,
   UserCircle,
   Settings,
+  ClipboardList,
+  Award,
+  LineChart,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -35,6 +38,9 @@ export default function Sidebar({ role }: SidebarProps) {
 
   const studentLinks = [
     { path: '/student/dashboard', labelKey: 'nav.dashboard', icon: LayoutDashboard },
+    { path: '/student/assignments', labelKey: 'nav.myAssignments', icon: ClipboardList },
+    { path: '/student/badges', labelKey: 'nav.badges', icon: Award },
+    { path: '/student/scores', labelKey: 'nav.scoreChart', icon: LineChart },
     { path: '/tools', labelKey: 'nav.tools', icon: Cpu },
     { path: '/profile', labelKey: 'nav.profile', icon: UserCircle },
     { path: '/settings', labelKey: 'nav.settings', icon: Settings },
@@ -44,6 +50,7 @@ export default function Sidebar({ role }: SidebarProps) {
 
   return (
     <div className="fixed top-0 left-0 h-screen w-16 sm:w-16 md:w-64 bg-white dark:bg-zinc-900 border-r border-gray-200 dark:border-zinc-800 p-3 md:p-6 flex flex-col z-40">
+      {/* Brand */}
       <div className="mb-6">
         <h1 className="text-lg md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 hidden md:block">
           {t('brand')}
@@ -51,8 +58,13 @@ export default function Sidebar({ role }: SidebarProps) {
         <p className="text-xs md:text-sm text-gray-500 dark:text-zinc-400 mt-1 hidden md:block">
           {role === 'teacher' ? t('nav.teacherPortal') : t('nav.studentPortal')}
         </p>
+        {/* Mobile: brand letter */}
+        <span className="md:hidden block text-center text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+          R
+        </span>
       </div>
 
+      {/* Controls */}
       <div className="md:hidden flex justify-center mb-4">
         <ThemeToggle />
       </div>

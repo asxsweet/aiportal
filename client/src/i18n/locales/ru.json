@@ -21,7 +21,10 @@
     "teacherPortal": "Портал преподавателя",
     "studentPortal": "Портал ученика",
     "profile": "Профиль",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "myAssignments": "Мои задания",
+    "badges": "Значки",
+    "scoreChart": "Динамика оценок"
   },
   "landing": {
     "title": "Изучайте робототехнику с ИИ-обратной связью",
@@ -102,6 +105,20 @@
     "needHelp": "Нужна помощь?",
     "needHelpDesc": "Материалы и руководства",
     "viewResources": "Материалы",
+    "loadError": "Не удалось загрузить задания."
+  },
+  "studentAssignments": {
+    "title": "Мои задания",
+    "subtitle": "Просмотр и фильтрация всех заданий",
+    "filterAll": "Все",
+    "filterPending": "В работе",
+    "filterSubmitted": "Сданные",
+    "filterGraded": "Оценённые",
+    "filterOverdue": "Просроченные",
+    "noResults": "Нет заданий по выбранному фильтру.",
+    "due": "Срок",
+    "startAssignment": "Начать задание",
+    "viewSubmission": "Просмотр сдачи",
     "loadError": "Не удалось загрузить задания."
   },
   "createAssignment": {
@@ -361,6 +378,73 @@
     "aiActive": "AI is active and generating response",
     "aiNotResponding": "AI is not responding / failed",
     "aiFailed": "AI evaluation failed or not available"
+  },
+  "badges": {
+    "title": "Значки",
+    "subtitle": "Зарабатывайте и демонстрируйте достижения",
+    "earnedCount": "{{count}} значков получено",
+    "allBadges": "Все значки",
+    "locked": "Заблокировано",
+    "loadError": "Не удалось загрузить значки.",
+    "first_project": "Первый проект",
+    "three_projects": "Три проекта",
+    "five_projects": "Пять проектов",
+    "ten_projects": "Десять проектов",
+    "high_score": "Высокий балл",
+    "excellent_score": "Отличный результат",
+    "perfect_score": "Идеальный результат",
+    "algorithm_master": "Мастер алгоритмов",
+    "presentation_pro": "Мастер презентаций",
+    "problem_solver": "Решатель проблем",
+    "innovation_star": "Звезда инноваций",
+    "safety_first": "Безопасность прежде всего",
+    "early_bird": "Ранняя пташка",
+    "streak_three": "Три подряд"
+  },
+  "scoreChart": {
+    "title": "Динамика оценок ИИ",
+    "subtitle": "Отслеживайте, как меняются оценки ИИ со временем",
+    "average": "Среднее",
+    "allCriteria": "Все критерии",
+    "noData": "Пока нет оценённых проектов. Сдайте проект, чтобы увидеть график.",
+    "loadError": "Не удалось загрузить оценки.",
+    "assignment": "Задание",
+    "avgScore": "Среднее ИИ",
+    "finalScore": "Итоговый балл",
+    "teacherScore": "Балл преподавателя",
+    "tableTitle": "Таблица оценок"
+  },
+  "templates": {
+    "label": "Выбрать шаблон (необязательно)",
+    "ev3LineFollower": {
+      "title": "EV3 Робот-линейщик",
+      "description": "Постройте робота на LEGO EV3, который следует по чёрной линии. Реализуйте калибровку датчика, ПИД-управление и обработку поворотов."
+    },
+    "ev3ObstacleAvoidance": {
+      "title": "EV3 Обход препятствий",
+      "description": "Создайте робота с ультразвуковым датчиком для обнаружения и обхода препятствий. Разработайте алгоритм навигации."
+    },
+    "ev3RoboticArm": {
+      "title": "EV3 Робот-манипулятор",
+      "description": "Соберите 3-осевой робот-манипулятор на сервомоторах EV3. Запрограммируйте захват и перемещение объектов."
+    },
+    "tinkercadCircuitDesign": {
+      "title": "Проектирование схемы в Tinkercad",
+      "description": "Разработайте схему в Tinkercad Circuits со светодиодами, резисторами и другими компонентами. Смоделируйте и задокументируйте проект."
+    },
+    "tinkercadSimulation": {
+      "title": "Tinkercad 3D моделирование",
+      "description": "Используйте Tinkercad 3D Design для моделирования детали робототехники. Задокументируйте размеры и ограничения."
+    },
+    "combinedSensorProject": {
+      "title": "Комбинированный сенсорный проект",
+      "description": "Объедините EV3 и Tinkercad для создания системы сбора и визуализации данных с датчиков. Анализируйте данные в реальном времени."
+    }
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "markAllRead": "Отметить все как прочитанные",
+    "empty": "Пока нет уведомлений."
   },
   "settings": {
     "title": "Настройки",

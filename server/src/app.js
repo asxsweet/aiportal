@@ -14,6 +14,8 @@ import analyticsRoutes from './routes/analytics.routes.js';
 import studentRoutes from './routes/student.routes.js';
 import aiRoutes from './routes/ai.routes.js';
 import materialRoutes from './routes/material.routes.js';
+import badgeRoutes from './routes/badge.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
 
 const app = express();
 
@@ -59,6 +61,8 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/materials', materialRoutes);
+app.use('/api/badges', badgeRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found', path: req.path });

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { api, getErrorMessage } from '@/lib/api';
 import ToolBadge from '../components/ToolBadge';
 import SidebarLayout from '../components/SidebarLayout';
+import NotificationBell from '../components/NotificationBell';
 
 type AssignmentRow = {
   id: string;
@@ -99,6 +100,7 @@ export default function TeacherDashboard() {
               <p className="text-gray-600 dark:text-zinc-400">{t('teacherDash.subtitle')}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              <NotificationBell />
               <Link
                 to="/profile"
                 className="px-4 py-2.5 rounded-lg border border-gray-200 dark:border-zinc-600 bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-200 text-sm font-medium hover:bg-gray-50 dark:hover:bg-zinc-800 flex items-center gap-2"

@@ -21,7 +21,10 @@
     "teacherPortal": "Teacher portal",
     "studentPortal": "Student portal",
     "profile": "Profile",
-    "settings": "Settings"
+    "settings": "Settings",
+    "myAssignments": "My Assignments",
+    "badges": "Badges",
+    "scoreChart": "Score Chart"
   },
   "landing": {
     "title": "Learn robotics with AI-assisted feedback",
@@ -103,6 +106,20 @@
     "needHelpDesc": "Check out our learning resources and guides",
     "viewResources": "View resources",
     "loadError": "Could not load your assignments."
+  },
+  "studentAssignments": {
+    "title": "My Assignments",
+    "subtitle": "View and filter all your assignments",
+    "filterAll": "All",
+    "filterPending": "Pending",
+    "filterSubmitted": "Submitted",
+    "filterGraded": "Graded",
+    "filterOverdue": "Overdue",
+    "noResults": "No assignments match the selected filter.",
+    "due": "Due",
+    "startAssignment": "Start assignment",
+    "viewSubmission": "View submission",
+    "loadError": "Could not load assignments."
   },
   "createAssignment": {
     "title": "Create new assignment",
@@ -361,6 +378,73 @@
     "aiActive": "AI is active and generating response",
     "aiNotResponding": "AI is not responding / failed",
     "aiFailed": "AI evaluation failed or not available"
+  },
+  "badges": {
+    "title": "Badges",
+    "subtitle": "Earn and showcase your achievements",
+    "earnedCount": "{{count}} badges earned",
+    "allBadges": "All badges",
+    "locked": "Locked",
+    "loadError": "Could not load badges.",
+    "first_project": "First Project",
+    "three_projects": "Three Projects",
+    "five_projects": "Five Projects",
+    "ten_projects": "Ten Projects",
+    "high_score": "High Score",
+    "excellent_score": "Excellent Score",
+    "perfect_score": "Perfect Score",
+    "algorithm_master": "Algorithm Master",
+    "presentation_pro": "Presentation Pro",
+    "problem_solver": "Problem Solver",
+    "innovation_star": "Innovation Star",
+    "safety_first": "Safety First",
+    "early_bird": "Early Bird",
+    "streak_three": "Three Streak"
+  },
+  "scoreChart": {
+    "title": "AI Score Dynamics",
+    "subtitle": "Track how your AI evaluation scores change over time",
+    "average": "Average",
+    "allCriteria": "All Criteria",
+    "noData": "No graded projects yet. Submit a project to see your score chart.",
+    "loadError": "Could not load scores.",
+    "assignment": "Assignment",
+    "avgScore": "AI Average",
+    "finalScore": "Final Score",
+    "teacherScore": "Teacher Score",
+    "tableTitle": "Score Table"
+  },
+  "templates": {
+    "label": "Choose a template (optional)",
+    "ev3LineFollower": {
+      "title": "EV3 Line Follower Robot",
+      "description": "Build a robot using LEGO EV3 that follows a black line. Implement sensor calibration, PID control, and handle turns on the track."
+    },
+    "ev3ObstacleAvoidance": {
+      "title": "EV3 Obstacle Avoidance",
+      "description": "Construct a robot that uses the ultrasonic sensor to detect and navigate around obstacles. Design an efficient pathfinding algorithm."
+    },
+    "ev3RoboticArm": {
+      "title": "EV3 Robotic Arm",
+      "description": "Build a 3-axis robotic arm with EV3 servo motors. Program it to pick up and place objects at designated positions."
+    },
+    "tinkercadCircuitDesign": {
+      "title": "Tinkercad Circuit Design",
+      "description": "Design a circuit using Tinkercad Circuits with LEDs, resistors, and other components. Simulate and document your circuit design."
+    },
+    "tinkercadSimulation": {
+      "title": "Tinkercad 3D Modeling",
+      "description": "Use Tinkercad 3D Design to model a robotics component. Document dimensions and design constraints."
+    },
+    "combinedSensorProject": {
+      "title": "Combined Sensor Project",
+      "description": "Combine EV3 and Tinkercad to create a sensor data collection and visualization system. Analyze real-time sensor data."
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet."
   },
   "settings": {
     "title": "Settings",

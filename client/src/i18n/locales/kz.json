@@ -21,7 +21,10 @@
     "teacherPortal": "Мұғалім порталы",
     "studentPortal": "Студент порталы",
     "profile": "Профиль",
-    "settings": "Баптаулар"
+    "settings": "Баптаулар",
+    "myAssignments": "Тапсырмаларым",
+    "badges": "Жетондар",
+    "scoreChart": "Баға динамикасы"
   },
   "landing": {
     "title": "ЖИ көмегімен робототехниканы үйреніңіз",
@@ -102,6 +105,20 @@
     "needHelp": "Көмек керек пе?",
     "needHelpDesc": "Оқу материалдары",
     "viewResources": "Материалдар",
+    "loadError": "Тапсырмалар жүктелмеді."
+  },
+  "studentAssignments": {
+    "title": "Тапсырмаларым",
+    "subtitle": "Барлық тапсырмаларды қарау және сүзу",
+    "filterAll": "Барлығы",
+    "filterPending": "Күтуде",
+    "filterSubmitted": "Тапсырылған",
+    "filterGraded": "Бағаланған",
+    "filterOverdue": "Мерзімі өткен",
+    "noResults": "Сүзгі бойынша тапсырма табылмады.",
+    "due": "Мерзімі",
+    "startAssignment": "Тапсырманы бастау",
+    "viewSubmission": "Жобаны көру",
     "loadError": "Тапсырмалар жүктелмеді."
   },
   "createAssignment": {
@@ -361,6 +378,73 @@
     "aiActive": "AI is active and generating response",
     "aiNotResponding": "AI is not responding / failed",
     "aiFailed": "AI evaluation failed or not available"
+  },
+  "badges": {
+    "title": "Жетондар",
+    "subtitle": "Жетістіктеріңізді жинаңыз және бейнелеңіз",
+    "earnedCount": "{{count}} жетон жиналды",
+    "allBadges": "Барлық жетондар",
+    "locked": "Құлыптаулы",
+    "loadError": "Жетондар жүктелмеді.",
+    "first_project": "Бірінші жоба",
+    "three_projects": "Үш жоба",
+    "five_projects": "Бес жоба",
+    "ten_projects": "Он жоба",
+    "high_score": "Жоғары балл",
+    "excellent_score": "Тамаша нәтиже",
+    "perfect_score": "Керемет нәтиже",
+    "algorithm_master": "Алгоритм шебері",
+    "presentation_pro": "Презентация кәсіпқойы",
+    "problem_solver": "Мәселе шешуші",
+    "innovation_star": "Инновация жұлдызы",
+    "safety_first": "Қауіпсіздік бірінші",
+    "early_bird": "Ерте құс",
+    "streak_three": "Үш қатарынан"
+  },
+  "scoreChart": {
+    "title": "ЖИ баға динамикасы",
+    "subtitle": "Жобаңыздың ЖИ бағалары қалай өзгергенін қараңыз",
+    "average": "Орташа",
+    "allCriteria": "Барлық критерийлер",
+    "noData": "Әлі бағаланған жоба жоқ. Жоба тапсырғаннан кейін график пайда болады.",
+    "loadError": "Бағалар жүктелмеді.",
+    "assignment": "Тапсырма",
+    "avgScore": "ЖИ орташа",
+    "finalScore": "Соңғы балл",
+    "teacherScore": "Мұғалім баллы",
+    "tableTitle": "Бағалар кестесі"
+  },
+  "templates": {
+    "label": "Үлгі таңдау (міндетті емес)",
+    "ev3LineFollower": {
+      "title": "EV3 сызық бойынша жүретін робот",
+      "description": "LEGO EV3 көмегімен қара сызық бойымен жүретін робот жасаңыз. Сенсорды калибрлеу, PID басқару және жолда бұрылыстарды өңдеу керек."
+    },
+    "ev3ObstacleAvoidance": {
+      "title": "EV3 кедергіден айналатын робот",
+      "description": "Ультрадыбыстық сенсорды қолданып, кедергілерді анықтап, айналатын робот құрастырыңыз. Навигация алгоритмін жасаңыз."
+    },
+    "ev3RoboticArm": {
+      "title": "EV3 робот қолы",
+      "description": "EV3 серво моторларымен 3 осьті робот қолы жасаңыз. Заттарды іріктеу және орналастыру тапсырмаларын орындаңыз."
+    },
+    "tinkercadCircuitDesign": {
+      "title": "Tinkercad сұлбасын жобалау",
+      "description": "Tinkercad Circuits көмегімен жарықдиод, резистор және басқа компоненттерді қолданып сұлба жобалаңыз. Сұлбаны симуляциялаңыз және құжаттаңыз."
+    },
+    "tinkercadSimulation": {
+      "title": "Tinkercad 3D модельдеу",
+      "description": "Tinkercad 3D Design көмегімен робототехникаға қажетті бөлшекті модельдеңыз. Өлшемдер мен шектеулерді құжаттаңыз."
+    },
+    "combinedSensorProject": {
+      "title": "Жинақы сенсорлық жоба",
+      "description": "EV3 және Tinkercad біріктіріп, сенсорлық мәліметтерді жинау және көрнекілеу жүйесін жасаңыз. Мәліметтерді нақты уақытта талдаңыз."
+    }
+  },
+  "notifications": {
+    "title": "Хабарландырулар",
+    "markAllRead": "Барлығын оқылды деп белгілеу",
+    "empty": "Хабарландырулар жоқ."
   },
   "settings": {
     "title": "Баптаулар",

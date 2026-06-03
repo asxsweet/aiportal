@@ -4,6 +4,39 @@ import { formatAssignment } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ok } from '../utils/helpers.js';
 
+export const getStudentScores = asyncHandler(async (req, res) => {
+  const studentOid = new mongoose.Types.ObjectId(req.user.id);
+  const projects = await Project.find({ studentId: studentOid })
+    .sort({ createdAt: 1 })
+    .populate('assignmentId', 'title')
+    .lean();
+
+  const scores = [];
+  for (const p of projects) {
+    const rating = await Rating.findOne({ projectId: p._id }).lean();
+    if (!rating) continue;
+    scores.push({
+      projectId: String(p._id),
+      projectTitle: p.title,
+      assignmentTitle: p.assignmentId?.title || '',
+      createdAt: p.createdAt,
+      aiIdea: rating.aiIdea ?? rating.aiScore,
+      aiAlgorithm: rating.aiAlgorithm ?? rating.aiScore,
+      aiTechnical: rating.aiTechnical ?? rating.aiScore,
+      aiTools: rating.aiTools ?? rating.aiScore,
+      aiPresentation: rating.aiPresentation ?? rating.aiScore,
+      aiProblemSolving: rating.aiProblemSolving ?? rating.aiScore,
+      aiInnovation: rating.aiInnovation ?? rating.aiScore,
+      aiSafety: rating.aiSafety ?? rating.aiScore,
+      aiScore: rating.aiScore,
+      finalScore: rating.finalScore,
+      teacherScore: rating.teacherScore ?? null,
+    });
+  }
+
+  return ok(res, { scores });
+});
+
 function parsePage(req) {
   const page = Math.max(1, Number(req.query.page) || 1);
   const pageSize = Math.min(50, Math.max(1, Number(req.query.pageSize) || 20));
@@ -35,7 +68,11 @@ export const getStudentDashboard = asyncHandler(async (req, res) => {
       const alg = rating?.aiAlgorithm ?? rating?.aiScore;
       const tech = rating?.aiTechnical ?? rating?.aiScore;
       const tools = rating?.aiTools ?? rating?.aiScore;
-      const aiOverall = idea != null ? Math.round((idea + alg + tech + tools) / 4) : null;
+      const presentation = rating?.aiPresentation ?? rating?.aiScore;
+      const problemSolving = rating?.aiProblemSolving ?? rating?.aiScore;
+      const innovation = rating?.aiInnovation ?? rating?.aiScore;
+      const safety = rating?.aiSafety ?? rating?.aiScore;
+      const aiOverall = idea != null ? Math.round((idea + alg + tech + tools + presentation + problemSolving + innovation + safety) / 8) : null;
       return {
         assignment: formatAssignment({ ...a, status: assignmentStatus }, a.createdBy?.name),
         projectId: project ? String(project._id) : null,

@@ -5,6 +5,8 @@ import { formatRating } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { computeFinalScore } from '../services/aiEvaluation.js';
 import { ok, fail } from '../utils/helpers.js';
+import { checkAndAwardBadges } from './badge.controller.js';
+import { createNotification } from './notification.controller.js';
 
 const patchSchema = z.object({
   teacherScore: z.number().int().min(0).max(100),
@@ -29,7 +31,11 @@ export const patchRatingByProject = asyncHandler(async (req, res) => {
   const alg = rating.aiAlgorithm ?? rating.aiScore;
   const tech = rating.aiTechnical ?? rating.aiScore;
   const tools = rating.aiTools ?? rating.aiScore;
-  const aiAvg = Math.round((idea + alg + tech + tools) / 4);
+  const pres = rating.aiPresentation ?? rating.aiScore;
+  const ps = rating.aiProblemSolving ?? rating.aiScore;
+  const inn = rating.aiInnovation ?? rating.aiScore;
+  const saf = rating.aiSafety ?? rating.aiScore;
+  const aiAvg = Math.round((idea + alg + tech + tools + pres + ps + inn + saf) / 8);
   const finalScore = computeFinalScore(aiAvg, body.teacherScore);
 
   const updated = await Rating.findOneAndUpdate(
@@ -46,6 +52,16 @@ export const patchRatingByProject = asyncHandler(async (req, res) => {
   ).lean();
 
   await Project.updateOne({ _id: req.params.projectId }, { $set: { status: 'graded' } });
+
+  checkAndAwardBadges(String(project.studentId)).catch(() => { /* non-blocking */ });
+
+  createNotification(
+    String(project.studentId),
+    'project_graded',
+    'Project graded',
+    `Your project received a score of ${Math.round(finalScore)}`,
+    `/project/${req.params.projectId}`,
+  ).catch(() => {});
 
   return ok(res, { rating: formatRating(updated) }, 'Rating updated');
 });

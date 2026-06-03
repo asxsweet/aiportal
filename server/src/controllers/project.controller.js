@@ -11,6 +11,8 @@ import { ok, fail } from '../utils/helpers.js';
 import { safeBaseNameFromUpload } from '../utils/filename.js';
 import { getExistingUploadFilePath } from '../utils/uploadPath.js';
 import { uploadFile, getDownloadInfo, deleteFile, makeS3Key, s3Key } from '../services/storage.js';
+import { checkAndAwardBadges } from '../controllers/badge.controller.js';
+import { createNotification } from '../controllers/notification.controller.js';
 
 const createFieldsSchema = z.object({
   assignmentId: z.string(),
@@ -260,6 +262,19 @@ export const createProject = asyncHandler(async (req, res) => {
       .lean();
     out.studentName = populated.studentId?.name;
     out.assignmentTitle = populated.assignmentId?.title;
+
+    checkAndAwardBadges(req.user.id).catch(() => { /* non-blocking */ });
+
+    const assignment = await Assignment.findById(body.assignmentId).lean();
+    if (assignment) {
+      createNotification(
+        String(assignment.createdBy),
+        'project_submitted',
+        'New submission',
+        `${req.user.name || 'A student'} submitted a project for "${assignment.title}"`,
+        `/assignment/${assignment._id}`,
+      ).catch(() => {});
+    }
 
     return ok(res, { project: out }, 'Project submitted');
   } catch (e) {

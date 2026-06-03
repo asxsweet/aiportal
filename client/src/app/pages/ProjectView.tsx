@@ -4,11 +4,12 @@ import ToolBadge from '../components/ToolBadge';
 import CommentSection from '../components/CommentSection';
 import AiAssistantPanel from '../components/AiAssistantPanel';
 import SidebarLayout from '../components/SidebarLayout';
-import { FileDown, Users, Calendar, Bot, User, Award } from 'lucide-react';
+import { FileDown, Users, Calendar, Bot, User, Award, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { api, getErrorMessage } from '@/lib/api';
 import { downloadBlob } from '@/lib/download';
+import jsPDF from 'jspdf';
 
 type Rating = {
   aiIdea: number;
@@ -165,6 +166,71 @@ export default function ProjectView() {
 
   const displayFileName = project.originalFileName || project.originalFilename || project.storedName || 'file';
 
+  const exportPdf = () => {
+    if (!project || !r) return;
+    const doc = new jsPDF();
+    const left = 20;
+    let y = 20;
+
+    doc.setFontSize(20);
+    doc.text(project.title, left, y);
+    y += 10;
+
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`${t('projectView.submitted')}: ${new Date(project.submittedAt).toLocaleDateString()}`, left, y);
+    y += 6;
+    if (project.studentName) {
+      doc.text(`${t('assignmentDetail.student')}: ${project.studentName}`, left, y);
+      y += 6;
+    }
+    if (project.assignmentTitle) {
+      doc.text(`${t('projectView.description')}: ${project.assignmentTitle}`, left, y);
+      y += 6;
+    }
+    doc.text(`${t('projectView.toolsUsed')}: ${project.tools.join(', ')}`, left, y);
+    y += 10;
+
+    doc.setFontSize(14);
+    doc.setTextColor(0);
+    doc.text(t('projectView.aiTitle'), left, y);
+    y += 8;
+
+    doc.setFontSize(10);
+    for (const c of criteria) {
+      doc.text(`${t(`projectView.criteria.${c.key}`)}: ${c.score}/100`, left, y);
+      y += 6;
+    }
+    y += 4;
+    doc.text(`${t('projectView.finalScore')}: ${displayFinal}`, left, y);
+    y += 10;
+
+    if (r.aiFeedback) {
+      doc.setFontSize(14);
+      doc.text(t('projectView.overallAi'), left, y);
+      y += 8;
+      doc.setFontSize(10);
+      const feedbackLines = doc.splitTextToSize(r.aiFeedback, 170);
+      doc.text(feedbackLines, left, y);
+      y += feedbackLines.length * 5 + 6;
+    }
+
+    if (r.teacherScore != null) {
+      doc.setFontSize(14);
+      doc.text(t('projectView.teacherTitle'), left, y);
+      y += 8;
+      doc.setFontSize(10);
+      doc.text(`${t('projectView.teacherScore')}: ${r.teacherScore}/100`, left, y);
+      y += 6;
+      if (r.teacherFeedback) {
+        const fbLines = doc.splitTextToSize(r.teacherFeedback, 170);
+        doc.text(fbLines, left, y);
+      }
+    }
+
+    doc.save(`${project.title.replace(/\s+/g, '_')}_report.pdf`);
+  };
+
   return (
     <SidebarLayout role={role === 'teacher' ? 'teacher' : 'student'}>
       <div className="p-8">
@@ -198,6 +264,14 @@ export default function ProjectView() {
                   <span className="text-3xl font-bold text-white">{displayFinal}</span>
                 </div>
                 <p className="text-sm font-medium text-gray-600 dark:text-zinc-400">{t('projectView.finalScore')}</p>
+                <button
+                  type="button"
+                  onClick={exportPdf}
+                  className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 dark:border-zinc-600 text-gray-700 dark:text-zinc-200 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  PDF
+                </button>
                 {r.teacherScore == null && (
                   <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{t('projectView.pendingTeacher')}</p>
                 )}
