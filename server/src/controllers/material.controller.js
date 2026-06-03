@@ -77,7 +77,10 @@ export const downloadMaterial = asyncHandler(async (req, res) => {
   const m = await LearningMaterial.findById(req.params.id).lean();
   if (!m?.fileUrl) return fail(res, 'File not found', 404);
   const info = await getDownloadInfo(m.fileUrl);
-  if (!info) return fail(res, 'File missing', 404);
+  if (!info) {
+    console.warn(`[download] Material file not found: id=${req.params.id}, key=${m.fileUrl}`);
+    return fail(res, 'File missing — it may have been removed. Contact your teacher or re-upload.', 404);
+  }
   if (info.type === 'url') return ok(res, { downloadUrl: info.url });
   res.download(info.path, m.originalName || 'material');
 });

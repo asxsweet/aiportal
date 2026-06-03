@@ -85,7 +85,10 @@ export const downloadProjectFile = asyncHandler(async (req, res) => {
     return fail(res, 'Forbidden', 403);
   }
   const info = await getDownloadInfo(row.fileUrl);
-  if (!info) return fail(res, 'File missing', 404);
+  if (!info) {
+    console.warn(`[download] Project file not found: id=${req.params.id}, key=${row.fileUrl}`);
+    return fail(res, 'File missing — it may have been removed. Contact your teacher or re-upload.', 404);
+  }
   if (info.type === 'url') return ok(res, { downloadUrl: info.url });
   res.download(info.path, row.originalFilename || 'submission');
 });

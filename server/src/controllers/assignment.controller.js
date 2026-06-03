@@ -157,7 +157,10 @@ export const downloadAttachment = asyncHandler(async (req, res) => {
     return fail(res, 'Assignment not found', 404);
   }
   const info = await getDownloadInfo(a.fileUrl);
-  if (!info) return fail(res, 'File missing', 404);
+  if (!info) {
+    console.warn(`[download] Assignment attachment not found: id=${req.params.id}, key=${a.fileUrl}`);
+    return fail(res, 'File missing — it may have been removed. Contact your teacher or re-upload.', 404);
+  }
   if (info.type === 'url') return ok(res, { downloadUrl: info.url });
   res.download(info.path, a.attachmentOriginalName || 'attachment');
 });
