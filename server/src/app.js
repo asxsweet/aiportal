@@ -13,6 +13,7 @@ import userRoutes from './routes/user.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import studentRoutes from './routes/student.routes.js';
 import aiRoutes from './routes/ai.routes.js';
+import materialRoutes from './routes/material.routes.js';
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/materials', materialRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Not found', path: req.path });

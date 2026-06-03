@@ -22,6 +22,10 @@ const ratingSchema = new mongoose.Schema(
     aiAlgorithm: { type: Number },
     aiTechnical: { type: Number },
     aiTools: { type: Number },
+    aiPresentation: { type: Number },
+    aiProblemSolving: { type: Number },
+    aiInnovation: { type: Number },
+    aiSafety: { type: Number },
     /** AI / automated feedback text */
     feedback: {
       type: String,

@@ -2,10 +2,11 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { randomUUID } from 'node:crypto';
-import { config } from '../config.js';
+import { config, isS3Configured } from '../config.js';
 import { safeBaseNameFromUpload } from '../utils/filename.js';
 
 const docExts = new Set(['.pdf', '.doc', '.docx']);
+const materialExts = new Set(['.pdf', '.doc', '.docx', '.ppt', '.pptx', '.txt', '.png', '.jpg', '.jpeg', '.mp4', '.webm']);
 const projectVideoMimeTypes = new Set(['video/mp4', 'video/webm', 'video/quicktime']);
 const projectVideoExts = new Set(['.mp4', '.webm', '.mov']);
 
@@ -14,6 +15,9 @@ function ensureDir(dir) {
 }
 
 function makeStorage(subfolder) {
+  if (isS3Configured()) {
+    return multer.memoryStorage();
+  }
   const dest = path.join(config.uploadDir, subfolder);
   ensureDir(dest);
   return multer.diskStorage({
@@ -69,4 +73,18 @@ export const avatarUpload = multer({
   storage: makeStorage('avatars'),
   fileFilter: imageFilter,
   limits: { fileSize: 2 * 1024 * 1024 },
+});
+
+function materialFileFilter(_req, file, cb) {
+  const ext = path.extname(safeBaseNameFromUpload(file.originalname)).toLowerCase();
+  if (!materialExts.has(ext)) {
+    return cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'Only PDF, DOC, DOCX, PPT, PPTX, TXT, PNG, JPG, MP4, or WEBM are allowed'));
+  }
+  cb(null, true);
+}
+
+export const materialUpload = multer({
+  storage: makeStorage('materials'),
+  fileFilter: materialFileFilter,
+  limits: { fileSize: 50 * 1024 * 1024 },
 });

@@ -3,13 +3,14 @@ import fs from 'fs';
 import mongoose from 'mongoose';
 import { z } from 'zod';
 import { Assignment, Project, User, Rating, Comment } from '../models/index.js';
-import { config } from '../config.js';
+import { config, isS3Configured } from '../config.js';
 import { formatProject, formatRating } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { evaluateProject, averageAiScore } from '../services/aiEvaluation.js';
 import { ok, fail } from '../utils/helpers.js';
 import { safeBaseNameFromUpload } from '../utils/filename.js';
 import { getExistingUploadFilePath } from '../utils/uploadPath.js';
+import { uploadFile, getDownloadInfo, deleteFile, makeS3Key, s3Key } from '../services/storage.js';
 
 const createFieldsSchema = z.object({
   assignmentId: z.string(),
@@ -83,9 +84,10 @@ export const downloadProjectFile = asyncHandler(async (req, res) => {
   if (req.user.role === 'teacher' && ownerId !== req.user.id) {
     return fail(res, 'Forbidden', 403);
   }
-  const full = getExistingUploadFilePath(row.fileUrl);
-  if (!full) return fail(res, 'File missing', 404);
-  res.download(full, row.originalFilename || 'submission');
+  const info = await getDownloadInfo(row.fileUrl);
+  if (!info) return fail(res, 'File missing', 404);
+  if (info.type === 'url') return ok(res, { downloadUrl: info.url });
+  res.download(info.path, row.originalFilename || 'submission');
 });
 
 export const listProjects = asyncHandler(async (req, res) => {
@@ -203,7 +205,14 @@ export const createProject = asyncHandler(async (req, res) => {
   }
 
   const teamMemberIds = parseTeamObjectIds(body.teamMembers);
-  const relPath = path.relative(config.uploadDir, req.file.path).replace(/\\/g, '/');
+  let relPath;
+  if (isS3Configured() && req.file.buffer) {
+    const key = makeS3Key('projects', `${Date.now()}-${safeBaseNameFromUpload(req.file.originalname)}`);
+    const result = await uploadFile({ buffer: req.file.buffer, key, mimeType: req.file.mimetype });
+    relPath = s3Key(key);
+  } else {
+    relPath = path.relative(config.uploadDir, req.file.path).replace(/\\/g, '/');
+  }
 
   try {
     const project = await Project.create({
@@ -232,6 +241,10 @@ export const createProject = asyncHandler(async (req, res) => {
       aiAlgorithm: ai.scores.algorithm,
       aiTechnical: ai.scores.technical,
       aiTools: ai.scores.toolsUsage,
+      aiPresentation: ai.scores.presentation,
+      aiProblemSolving: ai.scores.problemSolving,
+      aiInnovation: ai.scores.innovation,
+      aiSafety: ai.scores.safety,
       feedback: ai.feedback,
       finalScore: aiAvg,
     });

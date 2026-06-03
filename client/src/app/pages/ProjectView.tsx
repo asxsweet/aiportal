@@ -15,6 +15,10 @@ type Rating = {
   aiAlgorithm: number;
   aiTechnical: number;
   aiTools: number;
+  aiPresentation: number;
+  aiProblemSolving: number;
+  aiInnovation: number;
+  aiSafety: number;
   aiFeedback: string;
   aiOverall: number | null;
   teacherScore: number | null;
@@ -146,6 +150,10 @@ export default function ProjectView() {
     { key: 'algorithm', score: r.aiAlgorithm },
     { key: 'technical', score: r.aiTechnical },
     { key: 'tools', score: r.aiTools },
+    { key: 'presentation', score: r.aiPresentation },
+    { key: 'problemSolving', score: r.aiProblemSolving },
+    { key: 'innovation', score: r.aiInnovation },
+    { key: 'safety', score: r.aiSafety },
   ] as const;
 
   const displayFinal =
@@ -248,7 +256,7 @@ export default function ProjectView() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4 mb-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               {criteria.map((c) => (
                 <div key={c.key} className="bg-white dark:bg-zinc-950 rounded-lg p-4 border border-gray-100 dark:border-zinc-800">
                   <div className="flex items-center justify-between mb-2">

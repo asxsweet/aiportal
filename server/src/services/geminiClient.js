@@ -5,6 +5,10 @@ const responseSchema = z.object({
   algorithm: z.coerce.number(),
   technical: z.coerce.number(),
   toolsUsage: z.coerce.number(),
+  presentation: z.coerce.number(),
+  problemSolving: z.coerce.number(),
+  innovation: z.coerce.number(),
+  safety: z.coerce.number(),
   feedback: z.string().min(1).max(12000),
 });
 
@@ -56,7 +60,18 @@ export async function evaluateWithGemini({ apiKey, model, title, description, to
   const system = `You are an expert robotics / STEM educator. You evaluate student project write-ups (not the attached file).
 Score each dimension 0–100 as integers. Be fair: very short or vague descriptions should score lower on technical depth.
 Respond with JSON only, no markdown, matching this exact shape:
-{"idea":number,"algorithm":number,"technical":number,"toolsUsage":number,"feedback":string}
+{"idea":number,"algorithm":number,"technical":number,"toolsUsage":number,"presentation":number,"problemSolving":number,"innovation":number,"safety":number,"feedback":string}
+
+Dimension definitions:
+- idea: Originality and creativity of the project concept.
+- algorithm: Clarity and correctness of the algorithmic logic and control flow.
+- technical: Depth of technical detail — sensors, motors, circuits, code logic.
+- toolsUsage: How well the student used EV3, Tinkercad, or other specified tools.
+- presentation: How clearly the student explains the project — writing quality, structure, terminology.
+- problemSolving: Evidence of identifying problems and describing solutions or workarounds.
+- innovation: Novelty and originality beyond standard approaches — creative techniques or unique features.
+- safety: Awareness of safety practices — battery handling, sensor placement, testing precautions.
+
 feedback: 2–5 sentences, constructive, encouraging. The feedback language MUST be exactly ${language === 'ru' ? 'Russian' : language === 'kz' ? 'Kazakh' : 'English'} (no mixed language).`;
 
   const user = `Project title: ${title}
@@ -130,6 +145,10 @@ Return only the JSON object.`;
           algorithm: clampInt(validated.algorithm, 0, 100),
           technical: clampInt(validated.technical, 0, 100),
           toolsUsage: clampInt(validated.toolsUsage, 0, 100),
+          presentation: clampInt(validated.presentation, 0, 100),
+          problemSolving: clampInt(validated.problemSolving, 0, 100),
+          innovation: clampInt(validated.innovation, 0, 100),
+          safety: clampInt(validated.safety, 0, 100),
         },
         feedback: validated.feedback.trim(),
       };

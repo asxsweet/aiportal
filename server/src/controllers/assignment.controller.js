@@ -3,12 +3,13 @@ import fs from 'fs';
 import mongoose from 'mongoose';
 import { z } from 'zod';
 import { Assignment, Project, User, Rating, Comment } from '../models/index.js';
-import { config } from '../config.js';
+import { config, isS3Configured } from '../config.js';
 import { formatAssignment } from '../utils/dto.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ok, fail } from '../utils/helpers.js';
 import { safeBaseNameFromUpload } from '../utils/filename.js';
 import { getExistingUploadFilePath } from '../utils/uploadPath.js';
+import { uploadFile, getDownloadInfo, deleteFile, makeS3Key, s3Key } from '../services/storage.js';
 
 const toolsSchema = z.array(z.enum(['ev3', 'tinkercad'])).min(1);
 const createFieldsSchema = z.object({
@@ -79,8 +80,14 @@ export const createAssignment = asyncHandler(async (req, res) => {
   const body = createFieldsSchema.parse(req.body);
   let fileUrl = ''; let attachmentOriginalName = '';
   if (req.file) {
-    fileUrl = path.relative(config.uploadDir, req.file.path).replace(/\\/g, '/');
     attachmentOriginalName = safeBaseNameFromUpload(req.file.originalname);
+    if (isS3Configured() && req.file.buffer) {
+      const key = makeS3Key('assignments', `${Date.now()}-${attachmentOriginalName}`);
+      const result = await uploadFile({ buffer: req.file.buffer, key, mimeType: req.file.mimetype });
+      fileUrl = s3Key(key);
+    } else {
+      fileUrl = path.relative(config.uploadDir, req.file.path).replace(/\\/g, '/');
+    }
   }
   try {
     const doc = await Assignment.create({ title: body.title, description: body.description, deadline: new Date(body.deadline), status: 'active', fileUrl, attachmentOriginalName, tools: body.tools, createdBy: req.user.id });
@@ -135,15 +142,9 @@ export const deleteAssignment = asyncHandler(async (req, res) => {
   await Comment.deleteMany({ projectId: { $in: pids } });
   await Project.deleteMany({ assignmentId: a._id });
   await Assignment.deleteOne({ _id: a._id });
-  if (a.fileUrl) {
-    const full = getExistingUploadFilePath(a.fileUrl);
-    if (full) fs.unlinkSync(full);
-  }
+  if (a.fileUrl) await deleteFile(a.fileUrl);
   for (const p of projects) {
-    if (p.fileUrl) {
-      const f = getExistingUploadFilePath(p.fileUrl);
-      if (f) fs.unlinkSync(f);
-    }
+    if (p.fileUrl) await deleteFile(p.fileUrl);
   }
   return ok(res, null, 'Assignment deleted');
 });
@@ -155,8 +156,9 @@ export const downloadAttachment = asyncHandler(async (req, res) => {
   if (req.user.role === 'student' && a.status === 'archived') {
     return fail(res, 'Assignment not found', 404);
   }
-  const full = getExistingUploadFilePath(a.fileUrl);
-  if (!full) return fail(res, 'File missing', 404);
-  res.download(full, a.attachmentOriginalName || 'attachment');
+  const info = await getDownloadInfo(a.fileUrl);
+  if (!info) return fail(res, 'File missing', 404);
+  if (info.type === 'url') return ok(res, { downloadUrl: info.url });
+  res.download(info.path, a.attachmentOriginalName || 'attachment');
 });
 

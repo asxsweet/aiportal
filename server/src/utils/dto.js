@@ -60,12 +60,21 @@ export function formatRating(r) {
   const alg = o.aiAlgorithm ?? o.aiScore;
   const tech = o.aiTechnical ?? o.aiScore;
   const tools = o.aiTools ?? o.aiScore;
-  const aiOverall = Math.round((idea + alg + tech + tools) / 4);
+  const presentation = o.aiPresentation ?? o.aiScore;
+  const problemSolving = o.aiProblemSolving ?? o.aiScore;
+  const innovation = o.aiInnovation ?? o.aiScore;
+  const safety = o.aiSafety ?? o.aiScore;
+  const allScores = [idea, alg, tech, tools, presentation, problemSolving, innovation, safety];
+  const aiOverall = Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length);
   return {
     aiIdea: idea,
     aiAlgorithm: alg,
     aiTechnical: tech,
     aiTools: tools,
+    aiPresentation: presentation,
+    aiProblemSolving: problemSolving,
+    aiInnovation: innovation,
+    aiSafety: safety,
     aiFeedback: o.feedback,
     aiOverall,
     teacherScore: o.teacherScore,

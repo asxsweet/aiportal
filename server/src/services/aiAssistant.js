@@ -8,6 +8,10 @@ const evaluateResponseSchema = z.object({
   algorithm: z.coerce.number().min(0).max(10),
   technical: z.coerce.number().min(0).max(10),
   tools: z.coerce.number().min(0).max(10),
+  presentation: z.coerce.number().min(0).max(10),
+  problemSolving: z.coerce.number().min(0).max(10),
+  innovation: z.coerce.number().min(0).max(10),
+  safety: z.coerce.number().min(0).max(10),
   feedback: z.string().min(1).max(500),
 });
 
@@ -166,7 +170,7 @@ function assistFallback({ language }) {
 
 function evaluateFallback({ language }) {
   return {
-    scores: { idea: 6, algorithm: 6, technical: 6, tools: 6 },
+    scores: { idea: 6, algorithm: 6, technical: 6, tools: 6, presentation: 6, problemSolving: 6, innovation: 6, safety: 6 },
     feedback:
       language === 'ru'
         ? 'ИИ недоступен. Попробуйте снова.'
@@ -238,47 +242,64 @@ function guessEvaluateHeuristic({ projectText, assignmentText, selectedTools, la
   const len = String(projectText || '').trim().length;
   const toolTokens = (Array.isArray(selectedTools) ? selectedTools : []).map((t) => String(t).toLowerCase());
 
-  const mentionsSensor = /sensor|sensors|датчик|ультразв|distance|range|дистан/.test(txt);
+  const mentionsSensor = /sensor|sensors|датчик|ультразв|distance|range|дистан|қашық/.test(txt);
   const mentionsAlgorithm = /algorithm|logic|state|machine|flow|loop|cycle|алгоритм|логика|күй|цикл/.test(txt);
-  const mentionsControl = /pid|регулятор|контроль|controller|threshold|порог/.test(txt);
+  const mentionsControl = /pid|регулятор|контроль|controller|threshold|порог|шек/.test(txt);
   const mentionsTools = /ev3|tinkercad|lego|mindstorms|ev3|ардуино/.test(txt) || toolTokens.length > 0;
+  const mentionsSafety = /safety|safe|battery|charge|precaution|danger|қауіпсіз|батарея|заряд|безопаст|опасн|защит|қорға/.test(txt);
+  const mentionsProblemSolving = /problem|issue|challenge|fix|solve|solution|debug|error|мәселе|шешім|қате|жөнде|проблем|решен|исправ|ошібк/.test(txt);
+  const mentionsInnovation = /innovative|creative|unique|original|novel|custom|жаңа|ерекше|креатив|инноваци|оригинал|нестандарт|новый/.test(txt);
+  const mentionsPresentation = /step|first|then|finally|result|goal|method|conclusion|қадам|нәтиже|мақсат|әдіс|шаг|результат|цель|метод|итог/.test(txt);
 
   const base = clampInt(2 + Math.floor(len / 140), 0, 10);
   let idea = clampInt(base + (len > 220 ? 2 : 0), 0, 10);
   let algorithm = clampInt(base + (mentionsAlgorithm ? 3 : 0), 0, 10);
   let technical = clampInt(base + (mentionsSensor ? 2 : 0) + (mentionsControl ? 2 : 0), 0, 10);
   let tools = clampInt(base + (mentionsTools ? 3 : 0), 0, 10);
+  let presentation = clampInt(base + (mentionsPresentation ? 2 : 0) + (len > 300 ? 1 : 0), 0, 10);
+  let problemSolving = clampInt(base + (mentionsProblemSolving ? 3 : 0), 0, 10);
+  let innovation = clampInt(base - 1 + (mentionsInnovation ? 3 : 0), 0, 10);
+  let safety = clampInt(base - 2 + (mentionsSafety ? 4 : 0), 0, 10);
 
-  // If tools selected but write-up doesn't mention any relevant detail, slightly reduce.
   if (toolTokens.length > 0 && !mentionsTools) tools = clampInt(tools - 2, 0, 10);
 
   idea = clampInt(idea, 0, 10);
   algorithm = clampInt(algorithm, 0, 10);
   technical = clampInt(technical, 0, 10);
   tools = clampInt(tools, 0, 10);
+  presentation = clampInt(presentation, 0, 10);
+  problemSolving = clampInt(problemSolving, 0, 10);
+  innovation = clampInt(innovation, 0, 10);
+  safety = clampInt(safety, 0, 10);
 
   if (language === 'ru') {
     const feedbackParts = [];
     if (!mentionsAlgorithm) feedbackParts.push('Опиши алгоритм: решения, переходы и порядок действий.');
     if (!mentionsSensor) feedbackParts.push('Добавь логику датчиков и условия срабатывания.');
+    if (!mentionsSafety) feedbackParts.push('Укажи меры безопасности при работе с оборудованием.');
+    if (!mentionsProblemSolving) feedbackParts.push('Опиши трудности и способы их решения.');
     if (feedbackParts.length === 0) feedbackParts.push('Уточни параметры и протестируй поведение на разных сценариях.');
-    return { scores: { idea, algorithm, technical, tools }, feedback: feedbackParts.slice(0, 2).join(' ') };
+    return { scores: { idea, algorithm, technical, tools, presentation, problemSolving, innovation, safety }, feedback: feedbackParts.slice(0, 2).join(' ') };
   }
 
   if (language === 'kz') {
     const feedbackParts = [];
     if (!mentionsAlgorithm) feedbackParts.push('Алгоритмді сипатта: шешімдер, өтулер және әрекет реті.');
     if (!mentionsSensor) feedbackParts.push('Датчик логикасын және іске қосылу шарттарын қос.');
+    if (!mentionsSafety) feedbackParts.push('Жабдықпен жұмыс кезіндегі қауіпсіздік шараларын көрсет.');
+    if (!mentionsProblemSolving) feedbackParts.push('Қиындықтар мен шешу жолдарын сипатта.');
     if (feedbackParts.length === 0) feedbackParts.push('Параметрлерді нақтылап, әртүрлі жағдайларда тексер.');
-    return { scores: { idea, algorithm, technical, tools }, feedback: feedbackParts.slice(0, 2).join(' ') };
+    return { scores: { idea, algorithm, technical, tools, presentation, problemSolving, innovation, safety }, feedback: feedbackParts.slice(0, 2).join(' ') };
   }
 
   // English
   const feedbackParts = [];
   if (!mentionsAlgorithm) feedbackParts.push('Clarify the algorithm: decisions, transitions, and step-by-step flow.');
   if (!mentionsSensor) feedbackParts.push('Add sensor logic and trigger conditions.');
+  if (!mentionsSafety) feedbackParts.push('Mention safety practices when working with equipment.');
+  if (!mentionsProblemSolving) feedbackParts.push('Describe challenges encountered and how they were resolved.');
   if (feedbackParts.length === 0) feedbackParts.push('Specify parameters and test behavior across different scenarios.');
-  return { scores: { idea, algorithm, technical, tools }, feedback: feedbackParts.slice(0, 2).join(' ') };
+  return { scores: { idea, algorithm, technical, tools, presentation, problemSolving, innovation, safety }, feedback: feedbackParts.slice(0, 2).join(' ') };
 }
 
 export async function assistProject({ question, projectText, assignmentText, selectedTools, language }) {
@@ -340,7 +361,7 @@ export async function evaluateProjectShort({ projectText, assignmentText, select
 Respond only in ${languageName(lang)}.
 Keep answers very short.
 Return JSON only with this exact shape:
-{"idea":number,"algorithm":number,"technical":number,"tools":number,"feedback":string}
+{"idea":number,"algorithm":number,"technical":number,"tools":number,"presentation":number,"problemSolving":number,"innovation":number,"safety":number,"feedback":string}
 Scores must be integers from 0 to 10.
 feedback must be 1-2 short sentences, direct and useful.`;
 
@@ -366,6 +387,10 @@ Return only JSON.`;
         algorithm: clampInt(parsed.algorithm, 0, 10),
         technical: clampInt(parsed.technical, 0, 10),
         tools: clampInt(parsed.tools, 0, 10),
+        presentation: clampInt(parsed.presentation, 0, 10),
+        problemSolving: clampInt(parsed.problemSolving, 0, 10),
+        innovation: clampInt(parsed.innovation, 0, 10),
+        safety: clampInt(parsed.safety, 0, 10),
       },
       feedback: parsed.feedback.trim(),
     };

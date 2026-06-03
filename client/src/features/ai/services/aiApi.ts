@@ -18,7 +18,7 @@ export async function askAiEvaluation(payload: {
   language?: 'en' | 'ru' | 'kz';
 }) {
   const { data } = await api.post<{
-    scores: { idea: number; algorithm: number; technical: number; tools: number };
+    scores: { idea: number; algorithm: number; technical: number; tools: number; presentation: number; problemSolving: number; innovation: number; safety: number };
     feedback: string;
   }>('/api/ai/evaluate', payload);
   return data;

@@ -12,7 +12,7 @@ type Props = {
 };
 
 type EvalResult = {
-  scores: { idea: number; algorithm: number; technical: number; tools: number };
+  scores: { idea: number; algorithm: number; technical: number; tools: number; presentation: number; problemSolving: number; innovation: number; safety: number };
   feedback: string;
 };
 
@@ -94,7 +94,7 @@ export default function AiAssistantPanel({ projectText, assignmentText = '', sel
       setEvalStatus('failed');
       setEvalStatusText(t('aiAssistant.aiFailed'));
       setEvalResult({
-        scores: { idea: 0, algorithm: 0, technical: 0, tools: 0 },
+        scores: { idea: 0, algorithm: 0, technical: 0, tools: 0, presentation: 0, problemSolving: 0, innovation: 0, safety: 0 },
         feedback: t('aiAssistant.unavailable'),
       });
     } finally {
@@ -121,11 +121,15 @@ export default function AiAssistantPanel({ projectText, assignmentText = '', sel
 
       {evalResult && (
         <div className="mb-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 text-sm text-gray-800 dark:text-zinc-200">
-          <div className="grid grid-cols-2 gap-2 mb-2">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
             <div>{t('projectView.criteria.idea')}: {evalResult.scores.idea}</div>
             <div>{t('projectView.criteria.algorithm')}: {evalResult.scores.algorithm}</div>
             <div>{t('projectView.criteria.technical')}: {evalResult.scores.technical}</div>
             <div>{t('projectView.criteria.tools')}: {evalResult.scores.tools}</div>
+            <div>{t('projectView.criteria.presentation')}: {evalResult.scores.presentation}</div>
+            <div>{t('projectView.criteria.problemSolving')}: {evalResult.scores.problemSolving}</div>
+            <div>{t('projectView.criteria.innovation')}: {evalResult.scores.innovation}</div>
+            <div>{t('projectView.criteria.safety')}: {evalResult.scores.safety}</div>
           </div>
           <p className="text-gray-700 dark:text-zinc-300">{evalResult.feedback}</p>
         </div>
